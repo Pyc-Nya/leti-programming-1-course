@@ -47,7 +47,7 @@ void trim(char* str);
 
 /** output */
 void printHeader();
-void outStruct(User* user);
+void printUser(User* user);
 void printAllUsers(Head* my_head);
 void pressEnterToContinue();
 void clearConsole();
@@ -166,9 +166,11 @@ int main() {
                 break;
             }
         } while (option != 8);
+    } else {
+        puts("An error occurred while running the program!");
+    }
 
-        freeList(head);
-    } else puts("An error occurred while running the program!");
+    freeList(head);
 
     return 0;
 }
@@ -225,20 +227,15 @@ User* makeNode(char** str) {
 }
 
 void addNode(Head* my_head, User* new_node) {
-    User* q = NULL;
-
-    if (my_head && new_node) {
-        q = my_head->first;
-        if (q == NULL) {
-            my_head->last_id = 1;
-            my_head->first = new_node;
-            my_head->last = new_node;
-        } else {
-            my_head->last_id++;
-            new_node->id = my_head->last_id;
-            new_node->next = q;
-            my_head->first = new_node;
-        }
+    if (my_head->first == NULL) {
+        my_head->last_id = 1;
+        my_head->first = new_node;
+        my_head->last = new_node;
+    } else {
+        my_head->last_id++;
+        new_node->id = my_head->last_id;
+        new_node->next = my_head->first;
+        my_head->first = new_node;
     }
 }
 
@@ -418,7 +415,7 @@ void addUser(Head *head) {
                     }
                     printf("\nEnter friends count (less than %d): ", usersCount);
 
-                    if (scanf("%d", &tempFriendsCount) == 1 && tempFriendsCount <= MAXLEN && tempFriendsCount >= 0 && tempFriendsCount < usersCount) {
+                    if (scanf("%d", &tempFriendsCount) == 1 && tempFriendsCount <= MAXLEN && tempFriendsCount >= 0 && tempFriendsCount <= usersCount) {
                         newUser->friendsCount = tempFriendsCount;
                     } else {
                         puts("Invalid friends count -> setting 0 automatically");
@@ -607,7 +604,7 @@ void filterList(Head* head) {
         q = head->first;
         while (q != NULL) {
             if (startsWithIgnoreCase((ask == '2') ? q->profession : q->fullName, temp)) {
-                outStruct(q);
+                printUser(q);
                 j++;
             }
             q1 = q->next;
@@ -616,6 +613,17 @@ void filterList(Head* head) {
         if (j == 0) {
             printf("\nNo user seems to match your input.\n");
         }
+    }
+}
+
+void clearList(Head* head) {
+    User* q;
+    User* q1;
+    q = head->first;
+    while (q != NULL) {
+        q1 = q->next;
+        deleteNode(head, q);
+        q = q1;
     }
 }
 
@@ -665,17 +673,6 @@ char **simpleSplit(char *str, int length) {
     }
 
     return result;
-}
-
-void clearList(Head* head) {
-    User* q;
-    User* q1;
-    q = head->first;
-    while (q != NULL) {
-        q1 = q->next;
-        deleteNode(head, q);
-        q = q1;
-    }
 }
 
 void simpleSplitInt(User* user, const char *str, int isManual, int idList[], int usersCount) {
@@ -752,7 +749,7 @@ void printHeader() {
            "ID", "Full Name", "Age", "Profession", "Friends Rating", "Public Rating", "Friends Count", "Friends IDs");
 }
 
-void outStruct(User *user) {
+void printUser(User *user) {
     int i;
     printf("%-3d %-20s %-5d %-15s %-15.1f %-15.1f %-15d ",
            user->id, user->fullName, user->age, user->profession, user->friendsRating, user->publicRating, user->friendsCount);
@@ -772,7 +769,7 @@ void printAllUsers(Head* my_head) {
     printHeader();
     q = my_head->first;
     while (q != NULL) {
-        outStruct(q);
+        printUser(q);
         q = q->next;
     }
 }

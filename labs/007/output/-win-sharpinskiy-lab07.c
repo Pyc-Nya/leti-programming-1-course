@@ -22,7 +22,7 @@ User *fillStruct(char **str);
 int cmp(const void *a, const void *b);
 void sortStructs(User **users, int count);
 void printHeader();
-void outStruct(User *user);
+void printUser(User *user);
 void printAllUsers(User **users, int count);
 void trim(char *str);
 void clearConsole();
@@ -59,7 +59,7 @@ int main() {
                 splitArray = simpleSplit(temp, slen, sep);
                 if (splitArray != NULL) {
                     users[i] = fillStruct(splitArray);
-                    if (users[i] != NULL) outStruct(users[i]);
+                    if (users[i] != NULL) printUser(users[i]);
                     else {
                         puts("Structure not allocated!");
                         i = n;
@@ -107,7 +107,7 @@ int main() {
             j = 0;
             for (i = 0; i < count; i++) {
                 if (startsWithIgnoreCase(users[i]->fullName, temp)) {
-                    outStruct(users[i]);
+                    printUser(users[i]);
                     j++;
                 }
             }
@@ -124,7 +124,7 @@ int main() {
             j = 0;
             for (i = 0; i < count; i++) {
                 if (startsWithIgnoreCase(users[i]->profession, temp)) {
-                    outStruct(users[i]);
+                    printUser(users[i]);
                     j++;
                 }
             }
@@ -244,7 +244,7 @@ void printHeader() {
            "ID", "Full Name", "Age", "Profession", "Friends Rating", "Public Rating", "Friends Count", "Friends IDs");
 }
 
-void outStruct(User *user) {
+void printUser(User *user) {
     int i;
     printf("%-3d %-20s %-5d %-15s %-15.1f %-15.1f %-15d ",
            user->id, user->fullName, user->age, user->profession, user->friendsRating, user->publicRating, user->friendsCount);
@@ -364,7 +364,7 @@ void printAllUsers(User **users, int count) {
     int i;
     printHeader();
     for (i = 0; i < count; i++) {
-        outStruct(users[i]);
+        printUser(users[i]);
     }
 }
 
