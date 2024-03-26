@@ -1,8 +1,0 @@
-{
-  "files.associations": {
-    "*.embeddedhtml": "html",
-    "*.html": "html",
-    "string.h": "c",
-    "ranges": "c"
-  }
-}
