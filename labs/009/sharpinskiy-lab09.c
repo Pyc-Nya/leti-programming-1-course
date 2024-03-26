@@ -205,7 +205,6 @@ Profession* makeProfessionNode(char name[MAXLEN]) {
 
 User* makeUserNode(ProfessionHead* pHead, char** str) {
     User* user = NULL;
-    Profession* q = NULL;
 
     user = (User*)malloc(sizeof(User));
 
@@ -213,11 +212,7 @@ User* makeUserNode(ProfessionHead* pHead, char** str) {
         user->fullName = str[0];
         user->age = atoi(str[1]);
         free(str[1]);
-        user->profession = NULL;
-        q = findProfessionByName(pHead, str[2]);
-        if (q != NULL) {
-            user->profession = q;
-        }
+        user->profession = findProfessionByName(pHead, str[2]);
         free(str[2]);
         user->friendsRating = atof(str[3]);
         free(str[3]);
