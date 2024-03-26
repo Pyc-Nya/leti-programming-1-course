@@ -43,17 +43,17 @@ Profession* makeProfessionNode(char name[MAXLEN]);
 User* makeUserNode(ProfessionHead* pHead, char** str);
 void addProfessionNode(ProfessionHead* head, Profession* profession);
 void addUserNode(UserHead* head, User* user);
-void deleteProfessionById(ProfessionHead* head, UserHead* userHead, int id, int shouldLog);
+void deleteProfessionNode(ProfessionHead* pHead, UserHead* uHead, Profession* profession);
 void clearUsersProfessionById(UserHead* head, int id);
 void deleteProfession(ProfessionHead* head, UserHead* userHead);
-void clearProfessionList(ProfessionHead* head, UserHead* userHead);
+void clearProfessionList(ProfessionHead* pHead, UserHead* uHead);
 void freeProfessionList(ProfessionHead* head);
 void freeUserStruct(User* user);
 void freeUserList(UserHead* head);
 
 /** utils */
-void readProfessions(char filename[MAXLEN], ProfessionHead* head);
-void readUsers(char filename[MAXLEN], UserHead* head, ProfessionHead* pHead);
+void readProfessions(char* filename, ProfessionHead* head);
+void readUsers(char* filename, UserHead* head, ProfessionHead* pHead);
 User* findUserById(UserHead* head, int id);
 Profession* findProfessionById(ProfessionHead* head, int id);
 Profession* findProfessionByName(ProfessionHead* head, char name[MAXLEN]);
@@ -87,75 +87,72 @@ void clearConsole();
 int main() {
     UserHead* userHead = NULL;
     ProfessionHead* professionHead = NULL;
-    char profFileName[MAXLEN];
-    char userFileName[MAXLEN];
-
     int option;
 
     userHead = makeUserHead();
     professionHead = makeProfessionHead();
 
-    strcpy(profFileName, "professions.csv");
-    strcpy(userFileName, "users.csv");
-    profFileName[MAXLEN - 1] = '\0';
-    userFileName[MAXLEN - 1] = '\0';
-    readProfessions(profFileName, professionHead);
-    readUsers(userFileName, userHead, professionHead);
+    if (userHead != NULL && professionHead != NULL) {
 
-    do {
-        clearConsole();
-        printMenu();
-        scanf("%d", &option);
-        getchar();
-        switch (option)
-        {
-        case 1:
-            clearConsole();
-            printOptionHeader("Print all users");
-            printAllUsers(userHead);
-            pressEnterToContinue();
-            break;
-        case 2:
-            clearConsole();
-            printOptionHeader("Print all professions");
-            printAllProfessions(professionHead);
-            pressEnterToContinue();
-            break;
-        case 3:
-            clearConsole();
-            printOptionHeader("Delete profession before id");
-            deleteProfession(professionHead, userHead);
-            pressEnterToContinue();
-            break;
-        case 4:
-            clearConsole();
-            printOptionHeader("Add new profession");
-            addProfession(professionHead);
-            pressEnterToContinue();
-            break;
-        case 5:
-            clearConsole();
-            printOptionHeader("Clear profession list");
-            clearProfessionList(professionHead, userHead);
-            pressEnterToContinue();
-            break;
-        case 6:
-            clearConsole();
-            printOptionHeader("Specify user profession");
-            specifyUserProfession(professionHead, userHead);
-            pressEnterToContinue();
-            break;
-        case 7:
-            clearConsole();
-            break;
-        default:
-            break;
-        }
+        readProfessions("professions.csv", professionHead);
+        readUsers("users.csv", userHead, professionHead);
 
-    } while (option != 7);
+        do {
+            clearConsole();
+            printMenu();
+            scanf("%d", &option);
+            getchar();
+            switch (option) {
+                case 1:
+                    clearConsole();
+                    printOptionHeader("Print all users");
+                    printAllUsers(userHead);
+                    pressEnterToContinue();
+                    break;
+                case 2:
+                    clearConsole();
+                    printOptionHeader("Print all professions");
+                    printAllProfessions(professionHead);
+                    pressEnterToContinue();
+                    break;
+                case 3:
+                    clearConsole();
+                    printOptionHeader("Delete profession before id");
+                    deleteProfession(professionHead, userHead);
+                    pressEnterToContinue();
+                    break;
+                case 4:
+                    clearConsole();
+                    printOptionHeader("Add new profession");
+                    addProfession(professionHead);
+                    pressEnterToContinue();
+                    break;
+                case 5:
+                    clearConsole();
+                    printOptionHeader("Clear profession list");
+                    clearProfessionList(professionHead, userHead);
+                    pressEnterToContinue();
+                    break;
+                case 6:
+                    clearConsole();
+                    printOptionHeader("Specify user profession");
+                    specifyUserProfession(professionHead, userHead);
+                    pressEnterToContinue();
+                    break;
+                case 7:
+                    clearConsole();
+                    break;
+                default:
+                    break;
+            }
 
-    freeProfessionList(professionHead);
-    freeUserList(userHead);
+        } while (option != 7);
+
+        freeProfessionList(professionHead);
+        freeUserList(userHead);
+    } else {
+        printf("Error: memory allocation error\n");
+    }
 
     return 0;
 }
@@ -167,23 +164,27 @@ int main() {
 
 ProfessionHead* makeProfessionHead() {
     ProfessionHead* head = NULL;
+
     head = (ProfessionHead*)malloc(sizeof(ProfessionHead));
     if (head != NULL) {
         head->count = 0;
         head->first = NULL;
         head->last = NULL;
     }
+
     return head;
 }
 
 UserHead* makeUserHead() {
     UserHead* head = NULL;
+
     head = (UserHead*)malloc(sizeof(UserHead));
     if (head != NULL) {
         head->count = 0;
         head->first = NULL;
         head->last = NULL;
     }
+
     return head;
 }
 
@@ -250,7 +251,7 @@ void addProfessionNode(ProfessionHead* head, Profession* profession) {
         profession->prev = head->last;          /* profession's previous element is last element */
         head->last->next = profession;          /* profession becomes element after last element */
         head->last = profession;                /* profession becomes last element */
-    }
+        }
 }
 
 void addUserNode(UserHead* head, User* user) {
@@ -267,100 +268,74 @@ void addUserNode(UserHead* head, User* user) {
         head->last->next = user;
         head->last = user;
     }
-}
-
-void deleteProfessionById(ProfessionHead* head, UserHead* userHead, int id, int shouldLog) {
-    Profession* q = NULL;
-    int isFound = 0;
-    q = head->first;
-
-    while (q != NULL && !isFound) {
-        if (q->id == id) {
-
-            if (q->prev != NULL) {
-                q->prev->next = q->next;
-            } else {
-                head->first = q->next;
-            }
-            if (q->next != NULL) {
-                q->next->prev = q->prev;
-            } else {
-                head->last = q->prev;
-            }
-
-            clearUsersProfessionById(userHead, id);
-
-            if (shouldLog) {
-                printf("\nProfession with id %d:\n", id);
-                printProfessionHeader();
-                printProfession(q);
-                printf("========================================\n");
-                printf("\nSuccess: profession with id %d has been removed!\n", id);
-            }
-            free(q);
-            head->count--;
-            isFound = 1;
-        } else {
-            q = q->next;
-        }
     }
+
+void deleteProfessionNode(ProfessionHead* pHead, UserHead* uHead, Profession* profession) {
+    if (pHead->first == profession) {
+        pHead->first = profession->next;
+    }
+    if (pHead->last == profession) {
+        pHead->last = profession->prev;
+    }
+    if (profession->prev != NULL) {
+        profession->prev->next = profession->next;
+    }
+    if (profession->next != NULL) {
+        profession->next->prev = profession->prev;
+    }
+    clearUsersProfessionById(uHead, profession->id);
+    free(profession);
+    pHead->count--;
 }
 
 void clearUsersProfessionById(UserHead* head, int id) {
     User* q = NULL;
-    q = head->first;
 
+    q = head->first;
     while (q != NULL) {
         if (q->profession != NULL && q->profession->id == id) {
             q->profession = NULL;
-        } else {
-            q = q->next;
         }
+        q = q->next;
     }
 }
 
-void deleteProfession(ProfessionHead* head, UserHead* userHead) {
-    int id, i, isFound = 0;
-    int idList[MAXLEN];
-    Profession* q = NULL;
+void deleteProfession(ProfessionHead* pHead, UserHead* uHead) {
+    int id;
+    Profession* profession = NULL;
 
-    q = head->first;
-    if (q != NULL) {
-        fillIntArray(idList, 0);
-        i = 0;
-        while (q != NULL) {
-            idList[i++] = q->id;
-            q = q->next;
-        }
-
-        printf("List of all professions:\n");
-        printAllProfessions(head);
-
-        printf("\nEnter profession id to delete profession before it (or 0 to return to menu): ");
+    if (pHead->first != NULL) {
+        printAllProfessions(pHead);
+        printf("\nEnter profession id to delete profession (or 0 to return to menu): ");
         scanf("%d", &id);
         getchar();
-
+        id--;
         if (id > 0) {
-            for (i = 0; i < MAXLEN && idList[i] != 0; i++) {
-                if (idList[i] == id - 1) {
-                    deleteProfessionById(head, userHead, id - 1, 1);
-                    isFound = 1;
-                    i = MAXLEN;
-                }
+            profession = findProfessionById(pHead, id);
+            if (profession == NULL) {
+                printf("\nFailed: there is no profession with id %d\n", id);
+            } else {
+                printf("\nProfession with id %d:\n", id);
+                printProfessionHeader();
+                printProfession(profession);
+                printShortLine();
+                deleteProfessionNode(pHead, uHead, profession);
+                printf("\nSuccess: profession with id %d has been removed!\n", id);
             }
-            if (!isFound) {
-                printf("\nThere is no profession with id %d\n", id - 1);
-            }
+        } else if (id != 0) {
+            printf("\nFailed: ID must be always positive\n");
         }
     } else {
-        printf("There are no professions in the list\n");
+        printf("The list of professions is empty\n");
+        printf("You can add new profession in menu with option 4\n");
     }
 }
 
-void clearProfessionList(ProfessionHead* head, UserHead* userHead) {
+void clearProfessionList(ProfessionHead* pHead, UserHead* uHead) {
     Profession *q, *q1;
     User* user;
-    q = head->first;
+
+    q = pHead->first;
     if (q == NULL) {
         printf("There are no profession in the list\n");
     } else {
@@ -369,28 +344,28 @@ void clearProfessionList(ProfessionHead* head, UserHead* userHead) {
             free(q);
             q = q1;
         }
-        user = userHead->first;
+        user = uHead->first;
         while (user != NULL) {
             user->profession = NULL;
             user = user->next;
         }
-        head->first = NULL;
-        head->last = NULL;
-        head->count = 0;
-        printf("Cleared!\n");
+        pHead->first = NULL;
+        pHead->last = NULL;
+        pHead->count = 0;
+        printf("Success: list cleared!\n");
     }
 }
 
 void freeProfessionList(ProfessionHead* head) {
     Profession *q, *q1;
-    q = head->first;
-    while (q != NULL) {
-        q1 = q->next;
-        free(q);
-        q = q1;
+            q = head->first;
+        while (q != NULL) {
+            q1 = q->next;
+            free(q);
+            q = q1;
+        }
+        free(head);
     }
-    free(head);
-}
 
 void freeUserStruct(User* user) {
     if (user != NULL) {
@@ -405,14 +380,14 @@ void freeUserList(UserHead* head) {
     User *q, *q1;
     /* there are two pointers here because we need to remember
     the next value of the structure we are going to free */
-    q = head->first;
-    while (q != NULL) {
-        q1 = q->next;
-        freeUserStruct(q);
-        q = q1;
+            q = head->first;
+        while (q != NULL) {
+            q1 = q->next;
+            freeUserStruct(q);
+            q = q1;
+        }
+        free(head);
     }
-    free(head);
-}
 
 
 
@@ -427,42 +402,42 @@ void freeUserList(UserHead* head) {
 
 
 
-void readProfessions(char filename[MAXLEN], ProfessionHead* head) {
+void readProfessions(char* filename, ProfessionHead* head) {
     FILE* file;
     Profession* profession;
     int n, count, i;
     char temp[MAXLEN];
 
-    profession = NULL;
-    n = count = 0;
-    file = fopen(filename, "r");
+            profession = NULL;
+        n = count = 0;
+        file = fopen(filename, "r");
 
-    if (file != NULL) {
-        while ((fgets(temp, MAXLEN, file)) != NULL) n++;
-        rewind(file);
+        if (file != NULL) {
+            while ((fgets(temp, MAXLEN, file)) != NULL) n++;
+            rewind(file);
 
-        for (i = 0; i < n; i++) {
-            nullString(temp);
-            fgets(temp, MAXLEN, file);
-            trim(temp);
-            profession = makeProfessionNode(temp);
-            if (profession != NULL) {
-                addProfessionNode(head, profession);
-                count++;
+            for (i = 0; i < n; i++) {
+                nullString(temp);
+                fgets(temp, MAXLEN, file);
+                trim(temp);
+                profession = makeProfessionNode(temp);
+                if (profession != NULL) {
+                    addProfessionNode(head, profession);
+                    count++;
+                }
             }
+            fclose(file);
+        } else {
+            perror("Failed to open file");
         }
-        fclose(file);
-    } else {
-        perror("Failed to open file");
-    }
 
-    if (count != n) {
-        perror("Failed to read from file");
-        freeProfessionList(head);
-    }
+        if (count != n) {
+            perror("Failed to read from file");
+            freeProfessionList(head);
+            }
 }
 
-void readUsers(char filename[MAXLEN], UserHead* head, ProfessionHead* pHead) {
+void readUsers(char* filename, UserHead* head, ProfessionHead* pHead) {
     FILE* file;
     User* user;
     int n, count, i, slen;
@@ -503,10 +478,12 @@ void readUsers(char filename[MAXLEN], UserHead* head, ProfessionHead* pHead) {
 
 Profession* findProfessionByName(ProfessionHead* head, char name[MAXLEN]) {
     Profession* q = NULL;
+    
     q = head->first;
     while (q != NULL && strcmp(q->name, name) != 0) {
         q = q->next;
     }
+
     return q;
 }
 
