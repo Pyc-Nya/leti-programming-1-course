@@ -36,6 +36,12 @@ typedef struct userHeadStruct {
     int count;
 } UserHead;
 
+
+
+
+/** program life cycle */
+void app(ProfessionHead* pHead, UserHead* uHead);
+
 /** work with nodes */
 ProfessionHead* makeProfessionHead();
 UserHead* makeUserHead();
@@ -87,75 +93,92 @@ void clearConsole();
 int main() {
     UserHead* userHead = NULL;
     ProfessionHead* professionHead = NULL;
-    int option;
 
     userHead = makeUserHead();
     professionHead = makeProfessionHead();
 
     if (userHead != NULL && professionHead != NULL) {
-
-        readProfessions("professions.csv", professionHead);
-        readUsers("users.csv", userHead, professionHead);
-
-        do {
-            clearConsole();
-            printMenu();
-            scanf("%d", &option);
-            getchar();
-            switch (option) {
-                case 1:
-                    clearConsole();
-                    printOptionHeader("Print all users");
-                    printAllUsers(userHead);
-                    pressEnterToContinue();
-                    break;
-                case 2:
-                    clearConsole();
-                    printOptionHeader("Print all professions");
-                    printAllProfessions(professionHead);
-                    pressEnterToContinue();
-                    break;
-                case 3:
-                    clearConsole();
-                    printOptionHeader("Delete profession before id");
-                    deleteProfession(professionHead, userHead);
-                    pressEnterToContinue();
-                    break;
-                case 4:
-                    clearConsole();
-                    printOptionHeader("Add new profession");
-                    addProfession(professionHead);
-                    pressEnterToContinue();
-                    break;
-                case 5:
-                    clearConsole();
-                    printOptionHeader("Clear profession list");
-                    clearProfessionList(professionHead, userHead);
-                    pressEnterToContinue();
-                    break;
-                case 6:
-                    clearConsole();
-                    printOptionHeader("Specify user profession");
-                    specifyUserProfession(professionHead, userHead);
-                    pressEnterToContinue();
-                    break;
-                case 7:
-                    clearConsole();
-                    break;
-                default:
-                    break;
-            }
-
-        } while (option != 7);
-
-        freeProfessionList(professionHead);
-        freeUserList(userHead);
+        app(professionHead, userHead);
     } else {
         printf("Error: memory allocation error\n");
     }
 
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+void app(ProfessionHead* professionHead, UserHead* userHead) {
+    int option;
+
+    readProfessions("professions.csv", professionHead);
+    readUsers("users.csv", userHead, professionHead);
+
+    do {
+        clearConsole();
+        printMenu();
+        scanf("%d", &option);
+        getchar();
+        switch (option) {
+            case 1:
+                clearConsole();
+                printOptionHeader("Print all users");
+                printAllUsers(userHead);
+                pressEnterToContinue();
+                break;
+            case 2:
+                clearConsole();
+                printOptionHeader("Print all professions");
+                printAllProfessions(professionHead);
+                pressEnterToContinue();
+                break;
+            case 3:
+                clearConsole();
+                printOptionHeader("Delete profession before id");
+                deleteProfession(professionHead, userHead);
+                pressEnterToContinue();
+                break;
+            case 4:
+                clearConsole();
+                printOptionHeader("Add new profession");
+                addProfession(professionHead);
+                pressEnterToContinue();
+                break;
+            case 5:
+                clearConsole();
+                printOptionHeader("Clear profession list");
+                clearProfessionList(professionHead, userHead);
+                pressEnterToContinue();
+                break;
+            case 6:
+                clearConsole();
+                printOptionHeader("Specify user profession");
+                specifyUserProfession(professionHead, userHead);
+                pressEnterToContinue();
+                break;
+            case 7:
+                clearConsole();
+                break;
+            default:
+                break;
+        }
+
+    } while (option != 7);
+
+    freeProfessionList(professionHead);
+    freeUserList(userHead);
+}
+
+
+
+
 
 
 
@@ -473,7 +496,7 @@ void readUsers(char* filename, UserHead* head, ProfessionHead* pHead) {
 
 Profession* findProfessionByName(ProfessionHead* head, char name[MAXLEN]) {
     Profession* q = NULL;
-    
+
     q = head->first;
     while (q != NULL && strcmp(q->name, name) != 0) {
         q = q->next;
