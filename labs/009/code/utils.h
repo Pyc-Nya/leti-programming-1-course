@@ -14,6 +14,6 @@ void getUsersIdList(UserHead* uHead, int* dest);
 int cmp(const void *a, const void *b);
 int binarySearch(const int arr[], int start, int end, int target);
 int startsWithIgnoreCase(const char *str, const char *prefix);
-
+void clearStdin();
 
 #endif

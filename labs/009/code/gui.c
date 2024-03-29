@@ -21,14 +21,14 @@ void appGUI(ProfessionHead* professionHead, UserHead* userHead) {
         clearConsole();
         printMenu();
         scanf("%d", &option);
-        getchar();
+        clearStdin();
         if (option != 0) {
             appOption(professionHead, userHead, option);
         } else {
             doYouWantToSave = -1;
             printf("\nDo you want to save changes? (1 - yes, 0 - no): ");
             scanf("%d", &doYouWantToSave);
-            getchar();
+            clearStdin();
             if (doYouWantToSave == 1) {
                 writeUsersToFile(userHead, "users.csv");
                 writeProfessionsToFile(professionHead, "professions.csv");
@@ -116,7 +116,7 @@ void deleteProfessionGUI(ProfessionHead* pHead, UserHead* uHead) {
         printAllProfessions(pHead);
         printf("\nEnter profession id to delete profession before it (or 0 to return to menu): ");
         scanf("%d", &id);
-        getchar();
+        clearStdin();
         if (id > 0) {
             id--;
             profession = findProfessionById(pHead, id);
@@ -169,7 +169,7 @@ void deleteUserGUI(UserHead* head) {
         printAllUsers(head);
         printf("\nEnter user id to delete user (or 0 to return to menu): ");
         scanf("%d", &id);
-        getchar();
+        clearStdin();
         if (id > 0) {
             user = findUserById(head, id);
             if (user == NULL) {
@@ -265,7 +265,7 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
     printAllUsers(uHead);
     printf("Enter user id: ");
     scanf("%d", &userId);
-    getchar();
+    clearStdin();
     user = findUserById(uHead, userId);
     if (user != NULL) {
         clearConsole();
@@ -282,7 +282,7 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
         printf("7. profession\n");
         printf("8. all fields\n");
         scanf("%d", &option);
-        getchar();
+        clearStdin();
         switch (option) {
             case 1:
                 printOptionHeader("Specify user name");
@@ -352,7 +352,7 @@ void specifyUserAgeGUI(User* user, int isStrict) {
 
     printf("Enter user age: ");
     success = scanf("%d", &age);
-    getchar();
+    clearStdin();
     if (age < 0 || age > 200 || success != 1) {
         if (isStrict) {
             user->age = 0;
@@ -370,7 +370,7 @@ void specifyUserFriendsRatingGUI(User* user, int isStrict) {
 
     printf("Enter user friends rating: ");
     success = scanf("%f", &rating);
-    getchar();
+    clearStdin();
     if (rating < 0 || rating > 5 || success != 1) {
         if (isStrict) {
             user->friendsRating = 0;
@@ -388,7 +388,7 @@ void specifyUserPublicRatingGUI(User* user, int isStrict) {
 
     printf("Enter user public rating: ");
     success = scanf("%f", &rating);
-    getchar();
+    clearStdin();
     if (rating < 0 || rating > 5 || success != 1) {
         printf("Failed: invalid or impossible rating\n\n");
         if (isStrict) {
@@ -407,7 +407,7 @@ void specifyUserFriendsGUI(UserHead* uHead, User* user, int isStrict) {
     
     printf("Enter user friends count (less than %d): ", uHead->count);
     success = scanf("%d", &friendsCount);
-    getchar();
+    clearStdin();
     if (friendsCount < 0 || friendsCount > uHead->count || success != 1) {
         if (isStrict) {
             user->friendsCount = 0;
@@ -448,7 +448,7 @@ void specifyUserProfessionGUI(ProfessionHead* pHead, User* user, int isStrict) {
         printAllProfessions(pHead);
         printf("Enter profession id: ");
         success = scanf("%d", &professionId);
-        getchar();
+        clearStdin();
         if (success != 1) {
             professionId = 0;
         }
@@ -479,7 +479,7 @@ void filterUsersByFieldGUI(UserHead* uHead) {
     printf("6. Friends Count\n");
     printf("Enter option: ");
     scanf("%d", &option);
-    getchar();
+    clearStdin();
     switch (option) {
         case 1:
             printf("Enter name: ");
@@ -498,34 +498,34 @@ void filterUsersByFieldGUI(UserHead* uHead) {
         case 3:
             printf("Enter age: ");
             scanf("%d", &tempInt);
-            getchar();
+            clearStdin();
             filterUsersByAge(uHead, tempInt, tempInt);
             break;
         case 4:
             printf("Enter min friends rating: ");
             scanf("%f", &tempFloat1);
-            getchar();
+            clearStdin();
             printf("Enter max friends rating: ");
             scanf("%f", &tempFloat2);
-            getchar();
+            clearStdin();
             filterUsersByFriendsRating(uHead, tempFloat1, tempFloat2);
             break;
         case 5:
             printf("Enter min public rating: ");
             scanf("%f", &tempFloat1);
-            getchar();
+            clearStdin();
             printf("Enter max public rating: ");
             scanf("%f", &tempFloat2);
-            getchar();
+            clearStdin();
             filterUsersByPublicRating(uHead, tempFloat1, tempFloat2);
             break;
         case 6:
             printf("Enter min friends count: ");
             scanf("%d", &tempInt);
-            getchar();
+            clearStdin();
             printf("Enter max friends count: ");
             scanf("%d", &tempInt);
-            getchar();
+            clearStdin();
             filterUsersByFriendsCount(uHead, tempInt, tempInt);
             break;
         default:
@@ -541,7 +541,7 @@ void printFullUser(UserHead* uHead) {
     printAllUsers(uHead);
     printf("Enter user id: ");
     scanf("%d", &id);
-    getchar();
+    clearStdin();
     user = findUserById(uHead, id);
     if (user == NULL) {
         printf("User not found\n");
@@ -577,7 +577,7 @@ void sortUsersByFieldGUI(UserHead* uHead) {
         printf("6. Sort by friends count\n");
         printf("Enter option: ");
         scanf("%d", &option);
-        getchar();
+        clearStdin();
         if (option > 0 && option <= 6) {
             sortUsersByField(uHead, option);
             printf("Success: users sorted\n");

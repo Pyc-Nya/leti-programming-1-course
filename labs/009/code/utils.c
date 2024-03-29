@@ -232,3 +232,8 @@ int startsWithIgnoreCase(const char *str, const char *prefix) {
 
     return isPrefix;
 }
+
+void clearStdin() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) { }
+}

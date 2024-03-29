@@ -85,7 +85,7 @@ void printOptionHeader(const char* optionDescription) {
 
 void pressEnterToContinue() {
     printf("\nPress ENTER to continue ");
-    getchar();
+    clearStdin();
     clearConsole();
 }
 

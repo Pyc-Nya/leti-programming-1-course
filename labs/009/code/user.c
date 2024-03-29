@@ -43,6 +43,7 @@ User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
         free(str[5]);
 
         if (user->friendsCount > 0) {
+            user->friendsId = NULL;
             inputIntrray(uHead, user, str[6], ',', 0);
         } else {
             user->friendsId = NULL;
@@ -80,8 +81,8 @@ void freeUserStruct(User* user) {
         user->fullName = NULL;
         if (user->friendsId != NULL) {
             free(user->friendsId);
+            user->friendsId = NULL;
         }
-        user->friendsId = NULL;
 
         free(user);
     }
