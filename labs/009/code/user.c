@@ -257,6 +257,7 @@ void filterUsersByFriendsCount(UserHead* uHead, int minCount, int maxCount) {
 
 void deleteUserNode(UserHead* head, User* user) {
     User* q = NULL;
+    int* tempPtr;
     int i, j, check;
     int temp[MAXLEN];
 
@@ -274,9 +275,14 @@ void deleteUserNode(UserHead* head, User* user) {
             }
             if (check) {
                 q->friendsCount--;
-                q->friendsId = (int*)realloc(q->friendsId, q->friendsCount * sizeof(int));
-                for (i = 0; i < q->friendsCount; i++) {
-                    q->friendsId[i] = temp[i];
+                tempPtr = (int*)realloc(q->friendsId, q->friendsCount * sizeof(int));
+                if (tempPtr != NULL) {
+                    q->friendsId = tempPtr;
+                    for (i = 0; i < q->friendsCount; i++) {
+                        q->friendsId[i] = temp[i];
+                    }
+                } else {
+                    perror("Memory allocation failed");
                 }
             }
         }
