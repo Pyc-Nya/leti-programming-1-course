@@ -578,8 +578,12 @@ void sortUsersByFieldGUI(UserHead* uHead) {
         printf("Enter option: ");
         scanf("%d", &option);
         getchar();
-        sortUsersByField(uHead, option);
-        printf("Success: users sorted\n");
+        if (option > 0 && option <= 6) {
+            sortUsersByField(uHead, option);
+            printf("Success: users sorted\n");
+        } else {
+            printf("Wrong option\n");
+        }
     } else {
         printf("The list of users is empty\n");
         printf("You can add new user in menu with option 5\n");

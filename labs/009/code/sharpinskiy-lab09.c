@@ -27,7 +27,7 @@ typedef struct userStruct {
     float publicRating;
     int friendsCount;
     int* friendsId;
-    Profession* profession; 
+    Profession* profession;
     struct userStruct* next;
     struct userStruct* prev;
 } User;
@@ -273,7 +273,7 @@ void addUserGUI(ProfessionHead* pHead, UserHead* uHead) {
         specifyUserPublicRatingGUI(user, 1);
         specifyUserFriendsGUI(uHead, user, 1);
         specifyUserProfessionGUI(pHead, user, 1);
-        
+
         addUserNode(uHead, user);
         printf("\nSuccess: user has been added!\n");
         printUserHeader();
@@ -449,7 +449,7 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
     }
 }
 
-void specifyUserNameGUI(User* user, int isStrict) { 
+void specifyUserNameGUI(User* user, int isStrict) {
     char temp[MAXLEN];
 
     printf("Enter user name: ");
@@ -525,7 +525,7 @@ void specifyUserFriendsGUI(UserHead* uHead, User* user, int isStrict) {
     int friendsCount;
     int success;
     char temp[MAXLEN];
-    
+
     printf("Enter user friends count (less than %d): ", uHead->count);
     success = scanf("%d", &friendsCount);
     getchar();
@@ -561,7 +561,7 @@ void specifyUserProfessionGUI(ProfessionHead* pHead, User* user, int isStrict) {
     Profession* profession;
     int success;
     int professionId;
-    
+
     if (pHead->first == NULL) {
         printf("The list of professions is empty\n");
         printf("You can add new profession in menu with option 4\n");
@@ -699,8 +699,12 @@ void sortUsersByFieldGUI(UserHead* uHead) {
         printf("Enter option: ");
         scanf("%d", &option);
         getchar();
-        sortUsersByField(uHead, option);
-        printf("Success: users sorted\n");
+        if (option > 0 && option <= 6) {
+            sortUsersByField(uHead, option);
+            printf("Success: users sorted\n");
+        } else {
+            printf("Wrong option\n");
+        }
     } else {
         printf("The list of users is empty\n");
         printf("You can add new user in menu with option 5\n");
@@ -972,7 +976,7 @@ void writeProfessionsToFile(ProfessionHead* head, const char* filename) {
     if (file != NULL) {
         current = head->first;
         while (current != NULL) {
-            fprintf(file, "%d;%s\n", current->id, current->name);
+            fprintf(file, "%s\n", current->name);
 
             current = current->next;
         }
@@ -1184,7 +1188,7 @@ int binarySearch(const int arr[], int start, int end, int target) {
             end = mid - 1;
         }
     }
-    return result; 
+    return result;
 }
 
 int startsWithIgnoreCase(const char *str, const char *prefix) {
@@ -1355,7 +1359,7 @@ User* findUserById(UserHead* head, int id) {
 
 User* findUserByName(UserHead* head, char name[MAXLEN]) {
     User* q = NULL;
-    
+
     q = head->first;
     while (q != NULL && strcmp(q->fullName, name) != 0) {
         q = q->next;
@@ -1533,25 +1537,25 @@ int compareUsers(User* a, User* b, int option) {
     int result;
 
     switch (option) {
-        case 1: 
+        case 1:
             result =  a->id - b->id;
             break;
-        case 2: 
+        case 2:
             result = strcmp(a->fullName, b->fullName);
             break;
-        case 3: 
+        case 3:
             result = a->age - b->age;
             break;
-        case 4: 
+        case 4:
             result = (a->friendsRating > b->friendsRating) ? 1 : (a->friendsRating < b->friendsRating) ? -1 : 0;
             break;
-        case 5: 
+        case 5:
             result = (a->publicRating > b->publicRating) ? 1 : (a->publicRating < b->publicRating) ? -1 : 0;
             break;
-        case 6: 
+        case 6:
             result = a->friendsCount - b->friendsCount;
             break;
-        default: 
+        default:
             result = 0;
             break;
     }
@@ -1573,11 +1577,11 @@ void writeUsersToFile(UserHead* head, const char* filename) {
         current = head->first;
         while (current != NULL) {
             professionName = "undefined";
-            if (current->profession != NULL && current->profession->name != NULL) {
+            if (current->profession != NULL) {
                 professionName = current->profession->name;
             }
 
-            fprintf(file, "%s;%d;%s;%.1f;%.1f;%d", current->fullName, current->age, professionName, 
+            fprintf(file, "%s;%d;%s;%.1f;%.1f;%d", current->fullName, current->age, professionName,
                     current->friendsRating, current->publicRating, current->friendsCount);
 
             if (current->friendsCount > 0 && current->friendsId != NULL) {

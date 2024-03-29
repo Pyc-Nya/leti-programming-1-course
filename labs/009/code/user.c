@@ -380,7 +380,7 @@ void writeUsersToFile(UserHead* head, const char* filename) {
         current = head->first;
         while (current != NULL) {
             professionName = "undefined";
-            if (current->profession != NULL && current->profession->name != NULL) {
+            if (current->profession != NULL) {
                 professionName = current->profession->name;
             }
 

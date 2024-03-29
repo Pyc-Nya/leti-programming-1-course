@@ -146,7 +146,7 @@ void writeProfessionsToFile(ProfessionHead* head, const char* filename) {
     if (file != NULL) {
         current = head->first;
         while (current != NULL) {
-            fprintf(file, "%d;%s\n", current->id, current->name);
+            fprintf(file, "%s\n", current->name);
 
             current = current->next;
         }
