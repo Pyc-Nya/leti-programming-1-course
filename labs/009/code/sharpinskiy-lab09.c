@@ -872,16 +872,16 @@ Profession* makeProfessionNode(char name[MAXLEN]) {
 void addProfessionNode(ProfessionHead* head, Profession* profession) {
     head->count++;
 
-    if (head->first == NULL) {                  /* list is empty */
-        head->first = profession;               /* first element is profession */
-        head->last = profession;                /* last element is profession */
+    if (head->first == NULL) {                 
+        head->first = profession;              
+        head->last = profession;              
         profession->id = 1;
 
-    } else  {                                   /* list has only one element */
+    } else  {                                   
         profession->id = head->last->id + 1;
-        profession->prev = head->last;          /* profession's previous element is last element */
-        head->last->next = profession;          /* profession becomes element after last element */
-        head->last = profession;                /* profession becomes last element */
+        profession->prev = head->last;         
+        head->last->next = profession;        
+        head->last = profession;               
         }
 }
 
@@ -1286,8 +1286,6 @@ void freeUserStruct(User* user) {
 
 void freeUserList(UserHead* head) {
     User *q, *q1;
-    /* there are two pointers here because we need to remember
-    the next value of the structure we are going to free */
         q = head->first;
     while (q != NULL) {
         q1 = q->next;
