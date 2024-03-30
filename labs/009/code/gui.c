@@ -269,6 +269,7 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
     user = findUserById(uHead, userId);
     if (user != NULL) {
         clearConsole();
+        printOptionHeader("Update user data");
         printUserHeader();
         printUser(user);
         printLongLine();
@@ -278,9 +279,10 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
         printf("2. age\n");
         printf("3. friends rating\n");
         printf("4. public rating\n");
-        printf("6. friends\n");
-        printf("7. profession\n");
-        printf("8. all fields\n");
+        printf("5. friends\n");
+        printf("6. profession\n");
+        printf("7. all fields\n");
+        printf("Enter option: ");
         scanf("%d", &option);
         clearStdin();
         switch (option) {
@@ -300,15 +302,15 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
                 printOptionHeader("Specify user public rating");
                 specifyUserPublicRatingGUI(user, 0);
                 break;
-            case 6:
+            case 5:
                 printOptionHeader("Specify user friends");
                 specifyUserFriendsGUI(uHead, user, 0);
                 break;
-            case 7:
+            case 6:
                 printOptionHeader("Specify user profession");
                 specifyUserProfessionGUI(pHead, user, 0);
                 break;
-            case 8:
+            case 7:
                 printOptionHeader("Specify all fields");
                 specifyUserNameGUI(user, 0);
                 specifyUserAgeGUI(user, 0);
@@ -317,12 +319,14 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
                 specifyUserFriendsGUI(uHead, user, 0);
                 specifyUserProfessionGUI(pHead, user, 0);
                 break;
+            default:
+                printf("\nFailed: wrong option\n");
+                break;
         }
         printf("\nUpdated user:\n");
         printUserHeader();
         printUser(user);
         printLongLine();
-        printf("\nSuccess: user data updated\n");
     } else {
         printf("\nFailed: user not found\n");
     }

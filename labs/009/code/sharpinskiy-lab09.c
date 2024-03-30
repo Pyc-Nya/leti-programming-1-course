@@ -391,6 +391,7 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
     user = findUserById(uHead, userId);
     if (user != NULL) {
         clearConsole();
+        printOptionHeader("Update user data");
         printUserHeader();
         printUser(user);
         printLongLine();
@@ -400,11 +401,13 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
         printf("2. age\n");
         printf("3. friends rating\n");
         printf("4. public rating\n");
-        printf("6. friends\n");
-        printf("7. profession\n");
-        printf("8. all fields\n");
+        printf("5. friends\n");
+        printf("6. profession\n");
+        printf("7. all fields\n");
+        printf("Enter option: ");
         scanf("%d", &option);
         clearStdin();
+        printf("\n");
         switch (option) {
             case 1:
                 printOptionHeader("Specify user name");
@@ -422,15 +425,15 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
                 printOptionHeader("Specify user public rating");
                 specifyUserPublicRatingGUI(user, 0);
                 break;
-            case 6:
+            case 5:
                 printOptionHeader("Specify user friends");
                 specifyUserFriendsGUI(uHead, user, 0);
                 break;
-            case 7:
+            case 6:
                 printOptionHeader("Specify user profession");
                 specifyUserProfessionGUI(pHead, user, 0);
                 break;
-            case 8:
+            case 7:
                 printOptionHeader("Specify all fields");
                 specifyUserNameGUI(user, 0);
                 specifyUserAgeGUI(user, 0);
@@ -439,12 +442,14 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
                 specifyUserFriendsGUI(uHead, user, 0);
                 specifyUserProfessionGUI(pHead, user, 0);
                 break;
+            default:
+                printf("\nFailed: wrong option\n");
+                break;
         }
         printf("\nUpdated user:\n");
         printUserHeader();
         printUser(user);
         printLongLine();
-        printf("\nSuccess: user data updated\n");
     } else {
         printf("\nFailed: user not found\n");
     }
@@ -1388,7 +1393,7 @@ void filterUsersByProfessionName(UserHead* uHead, char* professionName) {
     printUserHeader();
     q = uHead->first;
     while (q != NULL) {
-        if (q->profession != NULL && startsWithIgnoreCase(q->profession->name, professionName) == 1) {
+        if ((q->profession != NULL && startsWithIgnoreCase(q->profession->name, professionName) == 1) || (q->profession == NULL && startsWithIgnoreCase("undefined", professionName) == 1)) {
             printUser(q);
         }
         q = q->next;
@@ -1508,7 +1513,6 @@ void sortList(UserHead* head, int option) {
     User* current = head->first;
     User* next = NULL;
     User* temp = NULL;
-    User* temp2 = NULL;
 
     if (head->first != NULL && head->first->next != NULL) {
         while (current != NULL) {
@@ -1531,11 +1535,11 @@ void sortList(UserHead* head, int option) {
             current = next;
         }
         head->first = sorted;
-        temp2 = sorted;
-        while (temp2 != NULL && temp2->next != NULL) {
-            temp2 = temp2->next;
+        temp = sorted;
+        while (temp != NULL && temp->next != NULL) {
+            temp = temp->next;
         }
-        head->last = temp2;
+        head->last = temp;
     }
 }
 

@@ -192,7 +192,7 @@ void filterUsersByProfessionName(UserHead* uHead, char* professionName) {
     printUserHeader();
     q = uHead->first;
     while (q != NULL) {
-        if (q->profession != NULL && startsWithIgnoreCase(q->profession->name, professionName) == 1) {
+        if ((q->profession != NULL && startsWithIgnoreCase(q->profession->name, professionName) == 1) || (q->profession == NULL && startsWithIgnoreCase("undefined", professionName) == 1)) {
             printUser(q);
         }
         q = q->next;
@@ -312,7 +312,6 @@ void sortList(UserHead* head, int option) {
     User* current = head->first;
     User* next = NULL;
     User* temp = NULL;
-    User* temp2 = NULL;
 
     if (head->first != NULL && head->first->next != NULL) {
         while (current != NULL) {
@@ -335,11 +334,11 @@ void sortList(UserHead* head, int option) {
             current = next;
         }
         head->first = sorted;
-        temp2 = sorted;
-        while (temp2 != NULL && temp2->next != NULL) {
-            temp2 = temp2->next;
+        temp = sorted;
+        while (temp != NULL && temp->next != NULL) {
+            temp = temp->next;
         }
-        head->last = temp2;
+        head->last = temp;
     }
 }
 
