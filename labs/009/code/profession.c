@@ -19,6 +19,9 @@ ProfessionHead* makeProfessionHead() {
         head->count = 0;
         head->first = NULL;
         head->last = NULL;
+    } else {
+        perror("Memory allocation failed");
+        makeLog("ERROR", "makeProfessionHead", "Memory allocation failed (head)");
     }
 
     return head;
@@ -52,7 +55,7 @@ void addProfessionNode(ProfessionHead* head, Profession* profession) {
         profession->prev = head->last;          /* profession's previous element is last element */
         head->last->next = profession;          /* profession becomes element after last element */
         head->last = profession;                /* profession becomes last element */
-        }
+    }
 }
 
 void deleteProfessionNode(ProfessionHead* pHead, UserHead* uHead, Profession* profession) {
@@ -95,6 +98,7 @@ void readProfessions(char* filename, ProfessionHead* head) {
         file = fopen(filename, "r");
 
         if (file != NULL) {
+            makeLog("FILE READ", "readProfessions", filename);
             while ((fgets(temp, MAXLEN, file)) != NULL) n++;
             rewind(file);
 
@@ -111,6 +115,7 @@ void readProfessions(char* filename, ProfessionHead* head) {
             fclose(file);
         } else {
             perror("Failed to open file");
+            makeLog("ERROR", "readProfessions", "Failed to open file");
         }
 
         if (count != n) {
@@ -144,6 +149,7 @@ void writeProfessionsToFile(ProfessionHead* head, const char* filename) {
     Profession* current = NULL;
 
     if (file != NULL) {
+        makeLog("FILE READ", "writeProfessionsToFile", filename);
         current = head->first;
         while (current != NULL) {
             fprintf(file, "%s\n", current->name);
@@ -153,6 +159,7 @@ void writeProfessionsToFile(ProfessionHead* head, const char* filename) {
 
         fclose(file);
     } else {
+        makeLog("ERROR", "writeProfessionsToFile", "Failed to open file");
         perror("Failed to open file");
     }
 }

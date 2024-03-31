@@ -15,5 +15,6 @@ int cmp(const void *a, const void *b);
 int binarySearch(const int arr[], int start, int end, int target);
 int startsWithIgnoreCase(const char *str, const char *prefix);
 void clearStdin();
+void makeLog(const char* title, const char* funcName, const char* log);
 
 #endif

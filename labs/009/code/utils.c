@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "user.h"
 #include "profession.h"
@@ -48,6 +49,7 @@ char **split(char *str, int length, char sep) {
     result = malloc(count * sizeof(char *));
     if (result == NULL) {
         perror("Memory allocation failed");
+        makeLog("ERROR", "split", "Memory allocation failed (result)");
     } else {
         for (i = 0; i < length; i++) {
             if (str[i] == ';' || str[i] == '\0') {
@@ -174,6 +176,7 @@ void inputIntrray(UserHead* uHead, User* user, char *str, char sep, int isManual
         user->friendsId = malloc(actualIdCount * sizeof(int));
         if (user->friendsId == NULL) {
             perror("Memory allocation failed");
+            makeLog("ERROR", "inpuIntArray", "Memory allocation failed (user->friendsId)");
         } else {
             for (i = 0; i < actualIdCount; i++) {
                 user->friendsId[i] = actualIds[i];
@@ -236,4 +239,24 @@ int startsWithIgnoreCase(const char *str, const char *prefix) {
 void clearStdin() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF) { }
+}
+
+void makeLog(const char* title, const char* funcName, const char* log) {
+    FILE* file = fopen("program.log", "a"); 
+    struct tm* timeinfo;
+    char timeStr[80];
+    time_t rawtime;
+
+    if (file == NULL) {
+        perror("Error opening log file");
+    } else {
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+
+        strftime(timeStr, sizeof(timeStr), "%Y-%m-%dT%H:%M:%S", timeinfo);
+
+        fprintf(file, "%-19s | FROM %-30s: %-15s %s\n", timeStr, funcName, title, log);
+
+        fclose(file); 
+    }
 }

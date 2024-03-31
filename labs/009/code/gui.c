@@ -158,6 +158,8 @@ void addUserGUI(ProfessionHead* pHead, UserHead* uHead) {
         printUserHeader();
         printUser(user);
         printLongLine();
+    } else {
+        makeLog("ERROR", "addUserGUI", "Memory allocation failed (user)");
     }
 }
 
@@ -254,6 +256,7 @@ void addProfessionGUI(ProfessionHead* head) {
             printf("\nFailed: memory error\n");
         }
     } else {
+        makeLog("ERROR", "addProfessionGUI", "Memory allocation failed (fgets)");
         printf("\nFailed: memory error\n");
     }
 }
@@ -277,10 +280,10 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
         printf("Which field do you want to edit?\n");
         printf("1. full name\n");
         printf("2. age\n");
-        printf("3. friends rating\n");
-        printf("4. public rating\n");
-        printf("5. friends\n");
-        printf("6. profession\n");
+        printf("3. profession\n");
+        printf("4. friends rating\n");
+        printf("5. public rating\n");
+        printf("6. friends\n");
         printf("7. all fields\n");
         printf("Enter option: ");
         scanf("%d", &option);
@@ -295,20 +298,20 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
                 specifyUserAgeGUI(user, 0);
                 break;
             case 3:
+                printOptionHeader("Specify user profession");
+                specifyUserProfessionGUI(pHead, user, 0);
+                break;
+            case 4:
                 printOptionHeader("Specify user friends rating");
                 specifyUserFriendsRatingGUI(user, 0);
                 break;
-            case 4:
+            case 5:
                 printOptionHeader("Specify user public rating");
                 specifyUserPublicRatingGUI(user, 0);
                 break;
-            case 5:
+            case 6:
                 printOptionHeader("Specify user friends");
                 specifyUserFriendsGUI(uHead, user, 0);
-                break;
-            case 6:
-                printOptionHeader("Specify user profession");
-                specifyUserProfessionGUI(pHead, user, 0);
                 break;
             case 7:
                 printOptionHeader("Specify all fields");
@@ -344,8 +347,10 @@ void specifyUserNameGUI(User* user, int isStrict) {
             printf("Success: name specified\n\n");
         } else {
             printf("Failed: memory error\n\n");
+            makeLog("ERROR", "specifyUserNameGUI", "Memory allocation failed (user->fullName)");
         }
     } else {
+        makeLog("ERROR", "specifyUserNameGUI", "Memory allocation failed (fgets)");
         printf("Failed: memory error\n\n");
     }
 }
@@ -435,6 +440,7 @@ void specifyUserFriendsGUI(UserHead* uHead, User* user, int isStrict) {
             trim(temp);
             inputIntrray(uHead, user, temp, ',', 1);
         } else {
+            makeLog("ERROR", "specifyUserFriendsGUI", "Memory allocation failed (fgets)");
             printf("Failed: memory error\n\n");
         }
     }

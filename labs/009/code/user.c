@@ -19,6 +19,9 @@ UserHead* makeUserHead() {
         head->count = 0;
         head->first = NULL;
         head->last = NULL;
+    } else {
+        perror("Memory allocation failed");
+        makeLog("ERROR", "makeUserHead", "Memory allocation failed (head)");
     }
 
     return head;
@@ -54,6 +57,9 @@ User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
 
         user->next = NULL;
         user->prev = NULL;
+    } else {
+        perror("Memory allocation failed");
+        makeLog("ERROR", "makeUserNode", "Memory allocation failed (user)");
     }
 
     return user;
@@ -125,6 +131,7 @@ void readUsers(char* filename, UserHead* head, ProfessionHead* pHead) {
     file = fopen(filename, "r");
 
     if (file != NULL) {
+        makeLog("FILE READ", "readUsers", filename);
         while ((fgets(temp, MAXLEN, file)) != NULL) n++;
         rewind(file);
 
@@ -144,6 +151,7 @@ void readUsers(char* filename, UserHead* head, ProfessionHead* pHead) {
         fclose(file);
     } else {
         perror("Failed to open file");
+        makeLog("ERROR", "readUsers", "Failed to open file");
     }
 
     if (count != n) {
@@ -383,6 +391,7 @@ void writeUsersToFile(UserHead* head, const char* filename) {
     int i;
 
     if (file != NULL) {
+        makeLog("FILE READ", "writeUsersToFile", filename);
         current = head->first;
         while (current != NULL) {
             professionName = "undefined";
@@ -411,5 +420,6 @@ void writeUsersToFile(UserHead* head, const char* filename) {
         fclose(file);
     } else {
         printf("Failed to open file %s\n", filename);
+        makeLog("ERROR", "writeUsersToFile", "Failed to open file");
     }
 }
