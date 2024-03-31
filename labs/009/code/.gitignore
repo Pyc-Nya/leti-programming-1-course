@@ -1,11 +1,4 @@
-program.log
-app
-app.exe
-gui.o
-output.o
-profession.o
-user.o
-utils.o
-sharpinskiy-lab09.o
-sharpinskiy-lab09
-sharpinskiy-lab09.exe
+*.log
+*.exe
+*.o
+sharpinskiy-lab09*
