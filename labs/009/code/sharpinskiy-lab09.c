@@ -38,6 +38,7 @@ typedef struct userHeadStruct {
     int count;
 } UserHead;
 
+/* gui.h */
 void appOption(ProfessionHead* professionHead, UserHead* userHead, int option);
 void appGUI(ProfessionHead* pHead, UserHead* uHead);
 void deleteProfessionGUI(ProfessionHead* head, UserHead* userHead);
@@ -57,6 +58,7 @@ void printFullUser(UserHead* uHead);
 void sortUsersByFieldGUI(UserHead* uHead);
 void clearUserListGUI(UserHead* head);
 
+/* output.h */
 void printMenu();
 void printProfessionHeader();
 void printAllProfessions(ProfessionHead* head);
@@ -71,6 +73,7 @@ void printProfession(Profession *profession);
 void printLongLine();
 void printShortLine();
 
+/* profession.h */
 ProfessionHead* makeProfessionHead();
 Profession* makeProfessionNode(char name[MAXLEN]);
 void addProfessionNode(ProfessionHead* head, Profession* profession);
@@ -81,6 +84,7 @@ Profession* findProfessionById(ProfessionHead* head, int id);
 Profession* findProfessionByName(ProfessionHead* head, char name[MAXLEN]);
 void writeProfessionsToFile(ProfessionHead* head, const char* filename);
 
+/* user.h */
 UserHead* makeUserHead();
 User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str);
 void addUserNode(UserHead* head, User* user);
@@ -102,6 +106,7 @@ void sortUsersByField(UserHead* uHead, int option);
 void sortList(UserHead* head, int option);
 void writeUsersToFile(UserHead* head, const char* filename);
 
+/* utils.h */
 void nullString(char str[MAXLEN]);
 void trim(char str[MAXLEN]);
 char **split(char *str, int length, char sep);
