@@ -149,7 +149,7 @@ void writeProfessionsToFile(ProfessionHead* head, const char* filename) {
     Profession* current = NULL;
 
     if (file != NULL) {
-        makeLog("FILE READ", "writeProfessionsToFile", filename);
+        makeLog("FILE WRITE", "writeProfessionsToFile", filename);
         current = head->first;
         while (current != NULL) {
             fprintf(file, "%s\n", current->name);

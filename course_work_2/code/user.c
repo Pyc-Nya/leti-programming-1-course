@@ -391,7 +391,7 @@ void writeUsersToFile(UserHead* head, const char* filename) {
     int i;
 
     if (file != NULL) {
-        makeLog("FILE READ", "writeUsersToFile", filename);
+        makeLog("FILE WRITE", "writeUsersToFile", filename);
         current = head->first;
         while (current != NULL) {
             professionName = "undefined";
