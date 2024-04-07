@@ -24,7 +24,7 @@ void trim(char str[MAXLEN]) {
     int i, flag = 0;
     str[MAXLEN - 1] = '\0';
     for (i = 0; str[i] != '\0' && !flag; i++) {
-        if (str[i] == '\n') {
+        if (str[i] == '\n' || str[i] == '\r') {
             str[i] = '\0';
             flag = 1;
         }
