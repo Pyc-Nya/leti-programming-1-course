@@ -162,7 +162,7 @@ void deleteProfessionGUI(ProfessionHead* pHead, UserHead* uHead) {
                 deleteProfessionNode(pHead, uHead, profession);
                 printf("\nSuccess: profession with id %d has been removed!\n", id);
             }
-        } else if (id != 0) {
+        } else if (id < 0) {
             printf("\nFailed: ID must be always positive\n");
         }
     } else {
@@ -341,8 +341,7 @@ void addProfessionNode(ProfessionHead* head, Profession* profession) {
 void deleteProfessionNode(ProfessionHead* pHead, UserHead* uHead, Profession* profession) {
     if (pHead->first == profession) {
         pHead->first = profession->next;
-    }
-    if (pHead->last == profession) {
+    } else if (pHead->last == profession) {
         pHead->last = profession->prev;
     }
     if (profession->prev != NULL) {
@@ -567,7 +566,7 @@ void trim(char str[MAXLEN]) {
     int i, flag = 0;
     str[MAXLEN - 1] = '\0';
     for (i = 0; str[i] != '\0' && !flag; i++) {
-        if (str[i] == '\n') {
+        if (str[i] == '\n' || str[i] == '\r') {
             str[i] = '\0';
             flag = 1;
         }

@@ -61,8 +61,7 @@ void addProfessionNode(ProfessionHead* head, Profession* profession) {
 void deleteProfessionNode(ProfessionHead* pHead, UserHead* uHead, Profession* profession) {
     if (pHead->first == profession) {
         pHead->first = profession->next;
-    }
-    if (pHead->last == profession) {
+    } else if (pHead->last == profession) {
         pHead->last = profession->prev;
     }
     if (profession->prev != NULL) {

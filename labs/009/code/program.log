@@ -1,0 +1,19 @@
+2024-03-31T23:24:20 | FROM main                          : APP START       App started work
+2024-03-31T23:24:20 | FROM readProfessions               : FILE READ       professions.csv
+2024-03-31T23:24:20 | FROM readUsers                     : FILE READ       users.csv
+2024-03-31T23:24:25 | FROM writeUsersToFile              : FILE READ       users.csv
+2024-03-31T23:24:25 | FROM writeProfessionsToFile        : FILE READ       professions.csv
+2024-03-31T23:24:26 | FROM main                          : APP FINISH      App finished work
+
+2024-03-31T23:25:01 | FROM main                          : APP START       App started work
+2024-03-31T23:25:01 | FROM readProfessions               : FILE READ       professions.csv
+2024-03-31T23:25:01 | FROM readUsers                     : FILE READ       users.csv
+2024-03-31T23:25:18 | FROM main                          : APP FINISH      App finished work
+
+2024-03-31T23:35:49 | FROM main                          : APP START       App started work
+2024-03-31T23:35:49 | FROM readProfessions               : FILE READ       professions.csv
+2024-03-31T23:35:49 | FROM readUsers                     : FILE READ       users.csv
+2024-03-31T23:35:54 | FROM writeUsersToFile              : FILE READ       users.csv
+2024-03-31T23:35:54 | FROM writeProfessionsToFile        : FILE READ       professions.csv
+2024-03-31T23:35:54 | FROM main                          : APP FINISH      App finished work
+
