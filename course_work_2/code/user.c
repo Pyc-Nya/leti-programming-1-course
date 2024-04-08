@@ -300,8 +300,7 @@ void deleteUserNode(UserHead* head, User* user) {
 
     if (head->first == user) {
         head->first = user->next;
-    }
-    if (head->last == user) {
+    } else if (head->last == user) {
         head->last = user->prev;
     }
     if (user->prev != NULL) {
