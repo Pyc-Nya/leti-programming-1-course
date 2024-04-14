@@ -6,3 +6,5 @@ sharpinskiy-lab*
 !*.c
 main
 app
+!*.docx
+!*.pdf
