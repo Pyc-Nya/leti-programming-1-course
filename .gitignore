@@ -7,6 +7,6 @@ sharpinskiy-lab*
 main
 app
 *.dtmp
-*.bkb
+*.bkp
 !*.docx
 !*.pdf
