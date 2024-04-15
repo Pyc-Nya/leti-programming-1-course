@@ -26,11 +26,10 @@ void reverseListGUI(ProfessionHead* pHead);
 ProfessionHead* makeProfessionHead();
 Profession* makeProfessionNode(char name[MAXLEN]);
 void pushBackProfessionNode(ProfessionHead* head, Profession* profession);
-void deleteProfessionNode(ProfessionHead* pHead, Profession* profession);
 void freeProfessionList(ProfessionHead* head);
 void readProfessions(char* filename, ProfessionHead* head);
 void pushFrontProfessionNode(ProfessionHead* head, Profession* profession);
-ProfessionHead* makeReversedList(ProfessionHead* head);
+ProfessionHead* makeReversedListWithNoID(ProfessionHead* head, int id);
 Profession* findProfessionById(ProfessionHead* head, int id);
 
 void trim(char str[MAXLEN]);
@@ -118,10 +117,8 @@ void reverseListGUI(ProfessionHead* pHead) {
             printProfessionHeader();
             printProfession(profession);
             printShortLine();
-            deleteProfessionNode(pHead, profession);
-            printf("\nSuccess: profession with id %d has been removed!\n", id);
             printf("\nReversed list:\n");
-            newPhead = makeReversedList(pHead);
+            newPhead = makeReversedListWithNoID(pHead, id);
             if (newPhead != NULL) {
                 printAllProfessions(newPhead);
                 freeProfessionList(newPhead);
@@ -174,30 +171,6 @@ void pushBackProfessionNode(ProfessionHead* head, Profession* profession) {
         head->last = profession;
     }
     profession->next = head->first;
-}
-
-void deleteProfessionNode(ProfessionHead* pHead, Profession* profession) {
-    Profession* temp = NULL;
-    int i;
-
-    temp = pHead->first;
-    if (temp == profession) {
-        pHead->first = temp->next;
-        profession->next = NULL;
-    } else {
-        for (i = 0; i < pHead->count; i++) {
-            if (temp->next == profession) {
-                temp->next = profession->next;
-                profession->next = NULL;
-                i = pHead->count;
-            } else {
-                temp = temp->next;
-            }
-        }
-    }
-
-    free(profession);
-    pHead->count--;
 }
 
 void freeProfessionList(ProfessionHead* head) {
@@ -262,7 +235,7 @@ void pushFrontProfessionNode(ProfessionHead* head, Profession* profession) {
     }
 }
 
-ProfessionHead* makeReversedList(ProfessionHead* head) {
+ProfessionHead* makeReversedListWithNoID(ProfessionHead* head, int id) {
     ProfessionHead* newHead = NULL;
     Profession* current = head->first;
     Profession* newNode;
@@ -272,12 +245,16 @@ ProfessionHead* makeReversedList(ProfessionHead* head) {
 
     if (newHead != NULL && current != NULL) {
         for (i = 0; i < head->count; i++) {
-            newNode = makeProfessionNode(current->name);
-            if (newNode != NULL) {
-                pushFrontProfessionNode(newHead, newNode);
-                current = current->next;
+            if (current->id != id) {
+                newNode = makeProfessionNode(current->name);
+                if (newNode != NULL) {
+                    pushFrontProfessionNode(newHead, newNode);
+                    current = current->next;
+                } else {
+                    i = head->count;
+                }
             } else {
-                i = head->count;
+                current = current->next;
             }
         }
     }
