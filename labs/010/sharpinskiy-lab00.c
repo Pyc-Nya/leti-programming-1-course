@@ -142,6 +142,8 @@ void reverseListGUI(ProfessionHead* pHead) {
                 printf("\nFailed: memory allocation failed\n");
             }
         }
+    } else {
+        printf("There are no profession in the list\n");
     }
 }
 
