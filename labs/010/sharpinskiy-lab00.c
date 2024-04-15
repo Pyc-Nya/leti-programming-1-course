@@ -6,6 +6,7 @@
 #define MAXLEN 256
 #define OPTION_1 "Print all profession"
 #define OPTION_2 "Select profession and reverse list"
+#define OPTION_3 "List carousel"
 
 typedef struct professionStruct {
     int id;
@@ -22,6 +23,7 @@ typedef struct professionHeadStruct {
 void appOption(ProfessionHead* pHead, int option);
 void appGUI(ProfessionHead* pHead);
 void reverseListGUI(ProfessionHead* pHead);
+void listCarouselGUI(ProfessionHead* pHead);
 
 ProfessionHead* makeProfessionHead();
 Profession* makeProfessionNode(char name[MAXLEN]);
@@ -44,6 +46,7 @@ void clearConsole();
 void trimForDisplay(char *output, const char *input, int maxLength);
 void printProfession(Profession *profession);
 void printShortLine();
+void printListSize(ProfessionHead *pHead);
 
 int main() {
     ProfessionHead* pHead = NULL;
@@ -75,7 +78,7 @@ void appGUI(ProfessionHead* pHead) {
         } else {
             clearConsole();
         }
-    } while (option != 0 && option != 2);
+    } while (option != 0);
 }
 
 void appOption(ProfessionHead* professionHead, int option) {
@@ -89,6 +92,9 @@ void appOption(ProfessionHead* professionHead, int option) {
             printOptionHeader(OPTION_2);
             reverseListGUI(professionHead);
             break;
+        case 3:
+            listCarouselGUI(professionHead);
+            break;
         default:
             clearConsole();
             printf("\nFailed: invalid option\n");
@@ -100,12 +106,12 @@ void appOption(ProfessionHead* professionHead, int option) {
 void reverseListGUI(ProfessionHead* pHead) {
     ProfessionHead* newPhead = NULL;
     Profession* profession = NULL;
-    int id;
+    int id, option;
 
     if (pHead->first != NULL) {
         printAllProfessions(pHead);
-        printf("Choose profession id (after this, this element will be removed from the list,\n");
-        printf("and a new list will be created with the order of elements reversed)\n\n");
+        printf("\nSelect the ID (after this a new list will be created that will contain all the elements of the original list\n");
+        printf("except the element whose ID you specify. The order of the elements will be inverse in this list)\n\n");
         printf("ID: ");
         scanf("%d", &id);
         clearStdin();
@@ -121,11 +127,48 @@ void reverseListGUI(ProfessionHead* pHead) {
             newPhead = makeReversedListWithNoID(pHead, id);
             if (newPhead != NULL) {
                 printAllProfessions(newPhead);
+                option = 0;
+                printf("Do you want to make sure that this list is circular?\n");
+                printf("1. Yes\n");
+                printf("2. No\n");
+                printf("Option: ");
+                scanf("%d", &option);
+                clearStdin();
+                if (option == 1) {
+                    listCarouselGUI(newPhead);
+                }
                 freeProfessionList(newPhead);
             } else {
                 printf("\nFailed: memory allocation failed\n");
             }
         }
+    }
+}
+
+void listCarouselGUI(ProfessionHead* pHead) {
+    Profession* temp;
+    int option;
+
+    if (pHead->first != NULL) {
+        temp = pHead->first;
+        do {
+            clearConsole();
+            printf("This program uses circular linked lists! You can verify this by using the \"carousel\" to endlessly scroll the list\n\n");
+            option = 0;
+            printProfessionHeader();
+            printProfession(temp);
+            printShortLine();
+            printf("\nPress ENTER to see the next profession\n");
+            printf("Press 0 to exit\n");
+            option = getchar();
+            if (option == '\n') {
+                temp = temp->next;
+            } else {
+                clearStdin();
+            }
+        } while (option != '0');
+    } else {
+        printf("\nThere are no professions in the list\n");
     }
 }
 
@@ -222,6 +265,9 @@ void readProfessions(char* filename, ProfessionHead* head) {
 }
 
 void pushFrontProfessionNode(ProfessionHead* head, Profession* profession) {
+    Profession* temp;
+    int i, id;
+
     head->count++;
 
     if (head->first == NULL) {
@@ -229,9 +275,15 @@ void pushFrontProfessionNode(ProfessionHead* head, Profession* profession) {
         head->last = profession;
         profession->id = 1;
     } else {
-        profession->id = head->first->id + 1;
         profession->next = head->first;
         head->first = profession;
+
+        id = 1;
+        temp = head->first;
+        for (i = 0; i < head->count; i++, id++) {
+            temp->id = id;
+            temp = temp->next;
+        }
     }
 }
 
@@ -239,23 +291,25 @@ ProfessionHead* makeReversedListWithNoID(ProfessionHead* head, int id) {
     ProfessionHead* newHead = NULL;
     Profession* current = head->first;
     Profession* newNode;
-    int i;
+    int i, errorFlag;
 
     newHead = makeProfessionHead();
 
     if (newHead != NULL && current != NULL) {
-        for (i = 0; i < head->count; i++) {
+        errorFlag = 0;
+        for (i = 0; i < head->count && !errorFlag; i++) {
             if (current->id != id) {
                 newNode = makeProfessionNode(current->name);
                 if (newNode != NULL) {
                     pushFrontProfessionNode(newHead, newNode);
-                    current = current->next;
                 } else {
-                    i = head->count;
+                    errorFlag = 1;
                 }
-            } else {
-                current = current->next;
             }
+            current = current->next;
+        }
+        if (!errorFlag) {
+            newHead->last->next = newHead->first;
         }
     }
 
@@ -306,6 +360,7 @@ void printMenu() {
     printf("| 0. Exit                                          |\n");
     printf("| 1. Print all professions                         |\n");
     printf("| 2. Select profession and reverse list            |\n");
+    printf("| 3. List carousel                                 |\n");
     printShortLine();
     printf("Option: ");
 }
@@ -319,6 +374,8 @@ void printProfessionHeader() {
 void printAllProfessions(ProfessionHead* head) {
     Profession *q;
     int i;
+
+    printListSize(head);
 
     printProfessionHeader();
     q = head->first;
@@ -368,4 +425,11 @@ void trimForDisplay(char *output, const char *input, int maxLength) {
     } else {
         strcpy(output, input);
     }
+}
+
+void printListSize(ProfessionHead *pHead) {
+    printShortLine();
+    printf("| List size: %-37d |\n", pHead->count);
+    printShortLine();
+    printf("\n");
 }
