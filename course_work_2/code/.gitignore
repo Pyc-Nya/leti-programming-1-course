@@ -1,7 +1,0 @@
-*.log
-*.exe
-*.o
-*sharpinskiy-lab*
-!*.c
-main
-app
