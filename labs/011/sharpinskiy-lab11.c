@@ -13,6 +13,7 @@ void convertCtoB(IPv4Address* addrC);
 void printIPv4Address(IPv4Address* addr);
 void printIPv4AddressBinary(IPv4Address* addr);
 void printBinary(int n);
+void inputIpv4(IPv4Address* addr, char ipClass);
 
 void clearConsole();
 void pressEnterToContinue();
@@ -20,17 +21,10 @@ void clearStdin();
 
 int main() {
     IPv4Address addr;
-    int oct1 = 0, oct2 = 0, oct3 = 0, oct4 = 0;
 
     clearConsole();
 
-    printf("Enter class B ipv4 address: ");
-    scanf("%d.%d.%d.%d", &oct1, &oct2, &oct3, &oct4);
-    clearStdin();
-    addr.oct1 = (unsigned char)oct1;
-    addr.oct2 = (unsigned char)oct2;
-    addr.oct3 = (unsigned char)oct3;
-    addr.oct4 = (unsigned char)oct4;
+    inputIpv4(&addr, 'B');
 
     printf("Original Class B address: ");
     printIPv4Address(&addr);
@@ -43,13 +37,7 @@ int main() {
 
     pressEnterToContinue();
 
-    printf("Enter class C ipv4 address: ");
-    scanf("%d.%d.%d.%d", &oct1, &oct2, &oct3, &oct4);
-    clearStdin();
-    addr.oct1 = (unsigned char)oct1;
-    addr.oct2 = (unsigned char)oct2;
-    addr.oct3 = (unsigned char)oct3;
-    addr.oct4 = (unsigned char)oct4;
+    inputIpv4(&addr, 'C');
 
     printf("\nOriginal Class C address: ");
     printIPv4Address(&addr);
@@ -63,6 +51,30 @@ int main() {
     pressEnterToContinue();
 
     return 0;
+}
+
+void inputIpv4(IPv4Address* addr, char ipClass) {
+    int oct1 = 0, oct2 = 0, oct3 = 0, oct4 = 0;
+    int condition;
+
+    do {
+        printf("Enter class %c ipv4 address: ", ipClass);
+        scanf("%d.%d.%d.%d", &oct1, &oct2, &oct3, &oct4);
+        clearStdin();
+        if (ipClass == 'B') {
+            condition = (128 <= oct1 && oct1 < 192) && (0 <= oct2 && oct2 < 256) && (0 <= oct3 && oct3 < 256) && (0 <= oct4 && oct4 < 256);
+        } else {
+            condition = (192 <= oct1 && oct1 < 224) && (0 <= oct2 && oct2 < 256) && (0 <= oct3 && oct3 < 256) && (0 <= oct4 && oct4 < 256);
+        }
+        if (condition) {
+            addr->oct1 = (unsigned char)oct1;
+            addr->oct2 = (unsigned char)oct2;
+            addr->oct3 = (unsigned char)oct3;
+            addr->oct4 = (unsigned char)oct4;
+        } else {
+            printf("Invalid class %c ipv4 address!\n", ipClass);
+        }
+    } while (!condition);
 }
 
 void clearConsole() {
