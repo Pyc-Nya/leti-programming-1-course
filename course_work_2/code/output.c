@@ -17,16 +17,15 @@ void printMenu() {
     printf("| 0. Exit                              |\n");
     printf("| 1. Print all users                   |\n");
     printf("| 2. Print all professions             |\n");
-    printf("| 3. Print full user data              |\n");
-    printf("| 4. Add new profession                |\n");
-    printf("| 5. Add new user                      |\n");
-    printf("| 6. Update user data                  |\n");
-    printf("| 7. Filter users                      |\n");
-    printf("| 8. Sort users                        |\n");
-    printf("| 9. Delete profession before id       |\n");
-    printf("| 10. Delete user                      |\n");
-    printf("| 11. Clear user list                  |\n");
-    printf("| 12. Clear profession list            |\n");
+    printf("| 3. Add new profession                |\n");
+    printf("| 4. Add new user                      |\n");
+    printf("| 5. Update user data                  |\n");
+    printf("| 6. Filter users                      |\n");
+    printf("| 7. Sort users                        |\n");
+    printf("| 8. Delete profession before id       |\n");
+    printf("| 9. Delete user                       |\n");
+    printf("| 10. Clear user list                  |\n");
+    printf("| 11. Clear profession list            |\n");
     printShortLine();
     printf("Option: ");
 }

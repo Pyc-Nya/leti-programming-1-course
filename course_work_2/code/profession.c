@@ -120,7 +120,7 @@ void readProfessions(char* filename, ProfessionHead* head) {
         if (count != n) {
             perror("Failed to read from file");
             freeProfessionList(head);
-            }
+        }
 }
 
 Profession* findProfessionByName(ProfessionHead* head, char name[MAXLEN]) {

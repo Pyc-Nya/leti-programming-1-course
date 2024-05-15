@@ -28,13 +28,12 @@ typedef struct userHeadStruct {
 
 UserHead* makeUserHead();
 User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str);
-void addUserNode(UserHead* head, User* user);
+void pushBackUserNode(UserHead* head, User* user);
 void freeUserStruct(User* user);
 void freeUserList(UserHead* head);
 void clearUsersProfessionById(UserHead* head, int id);
 void readUsers(char* filename, UserHead* head, ProfessionHead* pHead);
 User* findUserById(UserHead* head, int id);
-User* findUserByName(UserHead* head, char name[MAXLEN]);
 void filterUsersByPublicRating(UserHead* uHead, float minRating, float maxRating);
 void filterUsersByFriendsRating(UserHead* uHead, float minRating, float maxRating);
 void filterUsersByAge(UserHead* uHead, int minAge, int maxAge);
@@ -44,7 +43,6 @@ void filterUsersByName(UserHead* uHead, char* name);
 void deleteUserNode(UserHead* head, User* user);
 int compareUsers(User* a, User* b, int option);
 void sortUsersByField(UserHead* uHead, int option);
-void sortList(UserHead* head, int option);
 void writeUsersToFile(UserHead* head, const char* filename);
 
 #endif

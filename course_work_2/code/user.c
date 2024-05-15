@@ -47,7 +47,7 @@ User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
 
         if (user->friendsCount > 0) {
             user->friendsId = NULL;
-            inputIntrray(uHead, user, str[6], ',', 0);
+            inputIntArray(uHead, user, str[6], ',', 0);
         } else {
             user->friendsId = NULL;
         }
@@ -65,7 +65,7 @@ User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
     return user;
 }
 
-void addUserNode(UserHead* head, User* user) {
+void pushBackUserNode(UserHead* head, User* user) {
     head->count++;
 
     if (head->first == NULL) {
@@ -144,7 +144,7 @@ void readUsers(char* filename, UserHead* head, ProfessionHead* pHead) {
             if (splitArray != NULL) {
                 user = makeUserNode(pHead, head, splitArray);
                 if (user != NULL) {
-                    addUserNode(head, user);
+                    pushBackUserNode(head, user);
                 }
             }
         }
@@ -164,16 +164,6 @@ User* findUserById(UserHead* head, int id) {
     User* q = NULL;
     q = head->first;
     while (q != NULL && q->id != id) {
-        q = q->next;
-    }
-    return q;
-}
-
-User* findUserByName(UserHead* head, char name[MAXLEN]) {
-    User* q = NULL;
-    
-    q = head->first;
-    while (q != NULL && strcmp(q->fullName, name) != 0) {
         q = q->next;
     }
     return q;
@@ -314,7 +304,7 @@ void deleteUserNode(UserHead* head, User* user) {
     head->count--;
 }
 
-void sortList(UserHead* head, int option) {
+void sortUsersByField(UserHead* head, int option) {
     User* sorted = NULL;
     User* current = head->first;
     User* next = NULL;
@@ -377,10 +367,6 @@ int compareUsers(User* a, User* b, int option) {
     }
 
     return result;
-}
-
-void sortUsersByField(UserHead* uHead, int option) {
-    sortList(uHead, option);
 }
 
 void writeUsersToFile(UserHead* head, const char* filename) {

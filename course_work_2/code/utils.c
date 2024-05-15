@@ -80,7 +80,7 @@ char **split(char *str, int length, char sep) {
     return result;
 }
 
-void inputIntrray(UserHead* uHead, User* user, char *str, char sep, int isManual) {
+void inputIntArray(UserHead* uHead, User* user, char *str, char sep, int isManual) {
     int enteredIdCount = 0, sepCount = 0, unicIdCount = 0, actualIdCount = 0, startIndex, foundIndex;
     int start = 0;
     int i, len, isInputValid, n;

@@ -61,42 +61,38 @@ void appOption(ProfessionHead* professionHead, UserHead* userHead, int option) {
             printAllProfessions(professionHead);
             break;
         case 3:
-            printOptionHeader("Print full user data");
-            printFullUser(userHead);
-            break;
-        case 4:
             printOptionHeader("Add new profession");
             addProfessionGUI(professionHead);
             break;
-        case 5:
+        case 4:
             printOptionHeader("Add new user");
             addUserGUI(professionHead, userHead);
             break;
-        case 6:
+        case 5:
             printOptionHeader("Update user data");
             updateUserDataGUI(professionHead, userHead);
             break;
-        case 7:
+        case 6:
             printOptionHeader("Filter users");
             filterUsersByFieldGUI(userHead);
             break;
-        case 8:
+        case 7:
             printOptionHeader("Sort users");
             sortUsersByFieldGUI(userHead);
             break;
-        case 9:
+        case 8:
             printOptionHeader("Delete profession before id");
             deleteProfessionGUI(professionHead, userHead);
             break;
-        case 10:
+        case 9:
             printOptionHeader("Delete user");
             deleteUserGUI(userHead);
             break;
-        case 11:
+        case 10:
             printOptionHeader("Clear user list");
             clearUserListGUI(userHead);
             break;
-        case 12:
+        case 11:
             printOptionHeader("Clear profession list");
             clearProfessionListGUI(professionHead, userHead);
             break;
@@ -153,7 +149,7 @@ void addUserGUI(ProfessionHead* pHead, UserHead* uHead) {
         specifyUserFriendsGUI(uHead, user, 1);
         specifyUserProfessionGUI(pHead, user, 1);
         
-        addUserNode(uHead, user);
+        pushBackUserNode(uHead, user);
         printf("\nSuccess: user has been added!\n");
         printUserHeader();
         printUser(user);
@@ -341,6 +337,10 @@ void specifyUserNameGUI(User* user, int isStrict) {
     printf("Enter user name: ");
     if (fgets(temp, MAXLEN, stdin) != NULL) {
         trim(temp);
+        if (user->fullName != NULL) {
+            free(user->fullName);
+            user->fullName = NULL;
+        }
         user->fullName = (char*)malloc(strlen(temp) + 1);
         if (user->fullName != NULL) {
             strcpy(user->fullName, temp);
@@ -438,7 +438,7 @@ void specifyUserFriendsGUI(UserHead* uHead, User* user, int isStrict) {
         printf("Enter friends ids: ");
         if (fgets(temp, MAXLEN, stdin) != NULL) {
             trim(temp);
-            inputIntrray(uHead, user, temp, ',', 1);
+            inputIntArray(uHead, user, temp, ',', 1);
         } else {
             makeLog("ERROR", "specifyUserFriendsGUI", "Memory allocation failed (fgets)");
             printf("Failed: memory error\n\n");
@@ -541,37 +541,6 @@ void filterUsersByFieldGUI(UserHead* uHead) {
         default:
             printf("Wrong option\n");
             break;
-    }
-}
-
-void printFullUser(UserHead* uHead) {
-    User* user;
-    int i, id;
-
-    printAllUsers(uHead);
-    printf("Enter user id: ");
-    scanf("%d", &id);
-    clearStdin();
-    user = findUserById(uHead, id);
-    if (user == NULL) {
-        printf("User not found\n");
-    } else {
-        printf("User ID: %d\n", user->id);
-        printf("Name: %s\n", user->fullName);
-        printf("Age: %d\n", user->age);
-        printf("Profession: %s\n", user->profession ? user->profession->name : "undefined");
-        printf("Friends Count: %d\n", user->friendsCount);
-        printf("Friends Rating: %.1f\n", user->friendsRating);
-        printf("Public Rating: %.1f\n", user->publicRating);
-
-        printf("Friends IDs: ");
-        for (i = 0; i < user->friendsCount; i++) {
-            printf("%d", user->friendsId[i]);
-            if (i < user->friendsCount - 1) {
-                printf(", ");
-            }
-        }
-        printf("\n");
     }
 }
 

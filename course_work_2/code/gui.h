@@ -23,7 +23,6 @@ void addUserGUI(ProfessionHead* pHead, UserHead* uHead);
 void filterUsersByFieldGUI(UserHead* uHead);
 void deleteUserGUI(UserHead* head);
 void clearProfessionListGUI(ProfessionHead* pHead, UserHead* uHead);
-void printFullUser(UserHead* uHead);
 void sortUsersByFieldGUI(UserHead* uHead);
 void clearUserListGUI(UserHead* head);
 

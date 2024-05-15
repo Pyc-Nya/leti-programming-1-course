@@ -66,7 +66,7 @@ Profession* findProfessionByName(ProfessionHead* head, char name[MAXLEN]);
 
 UserHead* makeUserHead();
 User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str);
-void addUserNode(UserHead* head, User* user);
+void pushBackUserNode(UserHead* head, User* user);
 void freeUserStruct(User* user);
 void freeUserList(UserHead* head);
 void clearUsersProfessionById(UserHead* head, int id);
@@ -469,7 +469,7 @@ User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
     return user;
 }
 
-void addUserNode(UserHead* head, User* user) {
+void pushBackUserNode(UserHead* head, User* user) {
     head->count++;
 
     if (head->first == NULL) {
@@ -547,7 +547,7 @@ void readUsers(char* filename, UserHead* head, ProfessionHead* pHead) {
             if (splitArray != NULL) {
                 user = makeUserNode(pHead, head, splitArray);
                 if (user != NULL) {
-                    addUserNode(head, user);
+                    pushBackUserNode(head, user);
                 }
             }
         }
