@@ -380,7 +380,7 @@ void trim(char *str) {
     int i = 0;
 
     for (i = 0; i < MAXLEN; i++) {
-        if (str[i] == '\n') {
+        if (str[i] == '\n' || str[i] == '\r') {
             str[i] = '\0';
             i = MAXLEN;
         }

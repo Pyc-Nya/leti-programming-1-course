@@ -22,7 +22,7 @@ void printMenu() {
     printf("| 5. Update user data                  |\n");
     printf("| 6. Filter users                      |\n");
     printf("| 7. Sort users                        |\n");
-    printf("| 8. Delete profession before id       |\n");
+    printf("| 8. Delete profession                 |\n");
     printf("| 9. Delete user                       |\n");
     printf("| 10. Clear user list                  |\n");
     printf("| 11. Clear profession list            |\n");

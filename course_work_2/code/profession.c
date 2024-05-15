@@ -61,14 +61,21 @@ void pushBackProfessionNode(ProfessionHead* head, Profession* profession) {
 void deleteProfessionNode(ProfessionHead* pHead, UserHead* uHead, Profession* profession) {
     if (pHead->first == profession) {
         pHead->first = profession->next;
+        if (profession->next != NULL) {
+            profession->next->prev = profession->prev;
+        }
     } else if (pHead->last == profession) {
         pHead->last = profession->prev;
-    }
-    if (profession->prev != NULL) {
-        profession->prev->next = profession->next;
-    }
-    if (profession->next != NULL) {
-        profession->next->prev = profession->prev;
+        if (profession->prev != NULL) {
+            profession->prev->next = profession->next;
+        }
+    } else {
+        if (profession->prev != NULL) {
+            profession->prev->next = profession->next;
+        }
+        if (profession->next != NULL) {
+            profession->next->prev = profession->prev;
+        }
     }
     clearUsersProfessionById(uHead, profession->id);
     free(profession);

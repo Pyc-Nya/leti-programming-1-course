@@ -82,28 +82,38 @@ void pushBackUserNode(UserHead* head, User* user) {
 }
 
 void freeUserStruct(User* user) {
-    if (user != NULL) {
+    if (user->fullName != NULL) {
         free(user->fullName);
         user->fullName = NULL;
-        if (user->friendsId != NULL) {
-            free(user->friendsId);
-            user->friendsId = NULL;
-        }
-
-        free(user);
     }
+
+    if (user->friendsId != NULL) {
+        free(user->friendsId);
+        user->friendsId = NULL;
+    }
+
+    if (user->profession != NULL) {
+        user->profession = NULL;
+    }
+
+    free(user);
 }
 
 void freeUserList(UserHead* head) {
-    User *q, *q1;
-    /* there are two pointers here because we need to remember
-    the next value of the structure we are going to free */
-        q = head->first;
+    User *q = NULL, *q1 = NULL;
+    /* char buffer[MAXLEN]; */
+    
+    q = head->first;
+    /* makeLog("LIST FREE", "freeUserList", "start"); */
     while (q != NULL) {
+        /* sprintf(buffer, "%p", q->next); */
+        /* makeLog("attempt to get q->next", "freeUserList", buffer); */
         q1 = q->next;
         freeUserStruct(q);
         q = q1;
     }
+    /* sprintf(buffer, "%p", head); */
+    /* makeLog("attempt to free head", "freeUserList", buffer); */
     free(head);
 }
 
@@ -258,11 +268,11 @@ void deleteUserNode(UserHead* head, User* user) {
     User* q = NULL;
     int* tempPtr;
     int i, j, check;
-    int temp[MAXLEN];
+    int temp[MAXLEN] = {0};
 
     q = head->first;
     while (q != NULL) {
-        if (q->friendsCount > 0) {
+        if (q->friendsCount > 0 && q->friendsId != NULL) {
             check = 0;
             j = 0;
             for (i = 0; i < q->friendsCount; i++) {
@@ -274,15 +284,21 @@ void deleteUserNode(UserHead* head, User* user) {
             }
             if (check) {
                 q->friendsCount--;
-                tempPtr = (int*)realloc(q->friendsId, q->friendsCount * sizeof(int));
-                if (tempPtr != NULL) {
-                    q->friendsId = tempPtr;
-                    for (i = 0; i < q->friendsCount; i++) {
-                        q->friendsId[i] = temp[i];
-                    }
-                } else {
-                    perror("Memory allocation failed");
-                }
+				if (q->friendsCount != 0) {
+					tempPtr = (int*)malloc(q->friendsCount * sizeof(int));
+					if (tempPtr != NULL) {
+						free(q->friendsId);
+						q->friendsId = tempPtr;
+						for (i = 0; i < q->friendsCount; i++) {
+							q->friendsId[i] = temp[i];
+						}
+					} else {
+						perror("Memory allocation failed");
+					}
+				} else {
+					free(q->friendsId);
+					q->friendsId = NULL;
+				}
             }
         }
         q = q->next;
@@ -290,14 +306,21 @@ void deleteUserNode(UserHead* head, User* user) {
 
     if (head->first == user) {
         head->first = user->next;
+        if (user->next != NULL) {
+            user->next->prev = user->prev;
+        }
     } else if (head->last == user) {
         head->last = user->prev;
-    }
-    if (user->prev != NULL) {
-        user->prev->next = user->next;
-    }
-    if (user->next != NULL) {
-        user->next->prev = user->prev;
+        if (user->prev != NULL) {
+            user->prev->next = user->next;
+        }
+    } else {
+        if (user->prev != NULL) {
+            user->prev->next = user->next;
+        }
+        if (user->next != NULL) {
+            user->next->prev = user->prev;
+        }
     }
 
     freeUserStruct(user);

@@ -84,11 +84,11 @@ void inputIntArray(UserHead* uHead, User* user, char *str, char sep, int isManua
     int enteredIdCount = 0, sepCount = 0, unicIdCount = 0, actualIdCount = 0, startIndex, foundIndex;
     int start = 0;
     int i, len, isInputValid, n;
-    char tempStr[MAXLEN];
-    int enteredIds[MAXLEN];
-    int unicEnteredIds[MAXLEN];
-    int actualIds[MAXLEN];
-    int idList[MAXLEN];
+    char tempStr[MAXLEN] = {0};
+    int enteredIds[MAXLEN] = {0};
+    int unicEnteredIds[MAXLEN] = {0};
+    int actualIds[MAXLEN] = {0};
+    int idList[MAXLEN] = {0};
 
     for (i = 0; str[i] != '\0'; i++) {
         if (str[i] == sep) sepCount++;

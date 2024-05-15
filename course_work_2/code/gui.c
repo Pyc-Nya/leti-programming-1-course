@@ -81,7 +81,7 @@ void appOption(ProfessionHead* professionHead, UserHead* userHead, int option) {
             sortUsersByFieldGUI(userHead);
             break;
         case 8:
-            printOptionHeader("Delete profession before id");
+            printOptionHeader("Delete profession");
             deleteProfessionGUI(professionHead, userHead);
             break;
         case 9:
@@ -114,7 +114,6 @@ void deleteProfessionGUI(ProfessionHead* pHead, UserHead* uHead) {
         scanf("%d", &id);
         clearStdin();
         if (id > 0) {
-            id--;
             profession = findProfessionById(pHead, id);
             if (profession == NULL) {
                 printf("\nFailed: there is no profession with id %d\n", id);
@@ -139,15 +138,25 @@ void addUserGUI(ProfessionHead* pHead, UserHead* uHead) {
     User* user = NULL;
 
     user = (User*)malloc(sizeof(User));
+    user->age = 0;
+    user->friendsCount = 0;
+    user->publicRating = 0;
+    user->friendsRating = 0;
+    user->id = 0;
+    user->fullName = NULL;
+    user->profession = NULL;
+    user->friendsId = NULL;
+    user->next = NULL;
+    user->prev = NULL;
     if (user != NULL) {
         printf("Enter information for new user:\n");
 
-        specifyUserNameGUI(user, 1);
-        specifyUserAgeGUI(user, 1);
-        specifyUserFriendsRatingGUI(user, 1);
-        specifyUserPublicRatingGUI(user, 1);
-        specifyUserFriendsGUI(uHead, user, 1);
-        specifyUserProfessionGUI(pHead, user, 1);
+        specifyUserNameGUI(user);
+        specifyUserAgeGUI(user);
+        specifyUserFriendsRatingGUI(user);
+        specifyUserPublicRatingGUI(user);
+        specifyUserFriendsGUI(uHead, user);
+        specifyUserProfessionGUI(pHead, user);
         
         pushBackUserNode(uHead, user);
         printf("\nSuccess: user has been added!\n");
@@ -287,36 +296,36 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
         switch (option) {
             case 1:
                 printOptionHeader("Specify user name");
-                specifyUserNameGUI(user, 0);
+                specifyUserNameGUI(user);
                 break;
             case 2:
                 printOptionHeader("Specify user age");
-                specifyUserAgeGUI(user, 0);
+                specifyUserAgeGUI(user);
                 break;
             case 3:
                 printOptionHeader("Specify user profession");
-                specifyUserProfessionGUI(pHead, user, 0);
+                specifyUserProfessionGUI(pHead, user);
                 break;
             case 4:
                 printOptionHeader("Specify user friends rating");
-                specifyUserFriendsRatingGUI(user, 0);
+                specifyUserFriendsRatingGUI(user);
                 break;
             case 5:
                 printOptionHeader("Specify user public rating");
-                specifyUserPublicRatingGUI(user, 0);
+                specifyUserPublicRatingGUI(user);
                 break;
             case 6:
                 printOptionHeader("Specify user friends");
-                specifyUserFriendsGUI(uHead, user, 0);
+                specifyUserFriendsGUI(uHead, user);
                 break;
             case 7:
                 printOptionHeader("Specify all fields");
-                specifyUserNameGUI(user, 0);
-                specifyUserAgeGUI(user, 0);
-                specifyUserFriendsRatingGUI(user, 0);
-                specifyUserPublicRatingGUI(user, 0);
-                specifyUserFriendsGUI(uHead, user, 0);
-                specifyUserProfessionGUI(pHead, user, 0);
+                specifyUserNameGUI(user);
+                specifyUserAgeGUI(user);
+                specifyUserProfessionGUI(pHead, user);
+                specifyUserFriendsRatingGUI(user);
+                specifyUserPublicRatingGUI(user);
+                specifyUserFriendsGUI(uHead, user);
                 break;
             default:
                 printf("\nFailed: wrong option\n");
@@ -331,7 +340,7 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
     }
 }
 
-void specifyUserNameGUI(User* user, int isStrict) { 
+void specifyUserNameGUI(User* user) { 
     char temp[MAXLEN];
 
     printf("Enter user name: ");
@@ -355,7 +364,7 @@ void specifyUserNameGUI(User* user, int isStrict) {
     }
 }
 
-void specifyUserAgeGUI(User* user, int isStrict) {
+void specifyUserAgeGUI(User* user) {
     int age;
     int success;
 
@@ -363,9 +372,6 @@ void specifyUserAgeGUI(User* user, int isStrict) {
     success = scanf("%d", &age);
     clearStdin();
     if (age < 0 || age > 200 || success != 1) {
-        if (isStrict) {
-            user->age = 0;
-        }
         printf("Failed: invalid or impossible age\n\n");
     } else {
         user->age = age;
@@ -373,7 +379,7 @@ void specifyUserAgeGUI(User* user, int isStrict) {
     }
 }
 
-void specifyUserFriendsRatingGUI(User* user, int isStrict) {
+void specifyUserFriendsRatingGUI(User* user) {
     float rating;
     int success;
 
@@ -381,9 +387,6 @@ void specifyUserFriendsRatingGUI(User* user, int isStrict) {
     success = scanf("%f", &rating);
     clearStdin();
     if (rating < 0 || rating > 5 || success != 1) {
-        if (isStrict) {
-            user->friendsRating = 0;
-        }
         printf("Failed: invalid or impossible rating\n\n");
     } else {
         user->friendsRating = rating;
@@ -391,7 +394,7 @@ void specifyUserFriendsRatingGUI(User* user, int isStrict) {
     }
 }
 
-void specifyUserPublicRatingGUI(User* user, int isStrict) {
+void specifyUserPublicRatingGUI(User* user) {
     float rating;
     int success;
 
@@ -400,16 +403,13 @@ void specifyUserPublicRatingGUI(User* user, int isStrict) {
     clearStdin();
     if (rating < 0 || rating > 5 || success != 1) {
         printf("Failed: invalid or impossible rating\n\n");
-        if (isStrict) {
-            user->publicRating = 0;
-        }
     } else {
         user->publicRating = rating;
         printf("Success: public rating specified\n\n");
     }
 }
 
-void specifyUserFriendsGUI(UserHead* uHead, User* user, int isStrict) {
+void specifyUserFriendsGUI(UserHead* uHead, User* user) {
     int friendsCount;
     int success;
     char temp[MAXLEN];
@@ -418,9 +418,6 @@ void specifyUserFriendsGUI(UserHead* uHead, User* user, int isStrict) {
     success = scanf("%d", &friendsCount);
     clearStdin();
     if (friendsCount < 0 || friendsCount > uHead->count || success != 1) {
-        if (isStrict) {
-            user->friendsCount = 0;
-        }
         printf("Failed: invalid or impossible friends count\n\n");
     } else if (friendsCount == 0) {
         user->friendsCount = 0;
@@ -446,7 +443,7 @@ void specifyUserFriendsGUI(UserHead* uHead, User* user, int isStrict) {
     }
 }
 
-void specifyUserProfessionGUI(ProfessionHead* pHead, User* user, int isStrict) {
+void specifyUserProfessionGUI(ProfessionHead* pHead, User* user) {
     Profession* profession;
     int success;
     int professionId;
@@ -468,9 +465,6 @@ void specifyUserProfessionGUI(ProfessionHead* pHead, User* user, int isStrict) {
             printf("Success: profession specified\n\n");
         } else {
             printf("Failed: profession not found\n\n");
-            if (isStrict) {
-                user->profession = NULL;
-            }
         }
     }
 }
