@@ -117,13 +117,15 @@ void printUser(User *user) {
         trimForDisplay(profession, user->profession->name, sizeof(profession));
     }
 
-    for (i = 0; i < user->friendsCount; i++) {
-        sprintf(idStr, "%d", user->friendsId[i]);
-        strcat(friendsIds, idStr);
-        if (i < user->friendsCount - 1) {
-            strcat(friendsIds, ", ");
+    if (user->friendsId != NULL) {
+        for (i = 0; i < user->friendsCount; i++) {
+            sprintf(idStr, "%d", user->friendsId[i]);
+            strcat(friendsIds, idStr);
+            if (i < user->friendsCount - 1) {
+                strcat(friendsIds, ", ");
+            }
         }
-    }
+    } 
 
     trimForDisplay(trimmedFullName, user->fullName, 22);
     trimForDisplay(trimmedProfession, profession, 16);

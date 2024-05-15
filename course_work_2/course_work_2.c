@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 #define MAXLEN 256
 
@@ -26,7 +27,7 @@ typedef struct userStruct {
     float publicRating;
     int friendsCount;
     int* friendsId;
-    Profession* profession; 
+    Profession* profession;
     struct userStruct* next;
     struct userStruct* prev;
 } User;
@@ -62,7 +63,8 @@ Profession* findProfessionByName(ProfessionHead* head, char name[MAXLEN]);
 void writeProfessionsToFile(ProfessionHead* head, const char* filename);
 
 UserHead* makeUserHead();
-User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str);
+User* makeUserNode();
+void fillUserNode(ProfessionHead* pHead, UserHead* uHead, User* user, char** str);
 void pushBackUserNode(UserHead* head, User* user);
 void freeUserStruct(User* user);
 void freeUserList(UserHead* head);
@@ -234,13 +236,15 @@ void printUser(User *user) {
         trimForDisplay(profession, user->profession->name, sizeof(profession));
     }
 
-    for (i = 0; i < user->friendsCount; i++) {
-        sprintf(idStr, "%d", user->friendsId[i]);
-        strcat(friendsIds, idStr);
-        if (i < user->friendsCount - 1) {
-            strcat(friendsIds, ", ");
+    if (user->friendsId != NULL) {
+        for (i = 0; i < user->friendsCount; i++) {
+            sprintf(idStr, "%d", user->friendsId[i]);
+            strcat(friendsIds, idStr);
+            if (i < user->friendsCount - 1) {
+                strcat(friendsIds, ", ");
+            }
         }
-    }
+    } 
 
     trimForDisplay(trimmedFullName, user->fullName, 22);
     trimForDisplay(trimmedProfession, profession, 16);
@@ -431,10 +435,27 @@ UserHead* makeUserHead() {
     return head;
 }
 
-User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
+User* makeUserNode() {
     User* user = NULL;
 
     user = (User*)malloc(sizeof(User));
+    if (user != NULL) {
+        user->age = 0;
+        user->friendsCount = 0;
+        user->publicRating = 0;
+        user->friendsRating = 0;
+        user->id = 0;
+        user->fullName = NULL;
+        user->profession = NULL;
+        user->friendsId = NULL;
+        user->next = NULL;
+        user->prev = NULL;
+        user->id = 0;
+    }
+
+    return user;
+}
+void fillUserNode(ProfessionHead* pHead, UserHead* uHead, User* user, char** str) {
 
     if (user != NULL) {
         user->fullName = str[0];
@@ -465,8 +486,6 @@ User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
         perror("Memory allocation failed");
         makeLog("ERROR", "makeUserNode", "Memory allocation failed (user)");
     }
-
-    return user;
 }
 
 void pushBackUserNode(UserHead* head, User* user) {
@@ -506,7 +525,7 @@ void freeUserStruct(User* user) {
 void freeUserList(UserHead* head) {
     User *q = NULL, *q1 = NULL;
     /* char buffer[MAXLEN]; */
-    
+
     q = head->first;
     /* makeLog("LIST FREE", "freeUserList", "start"); */
     while (q != NULL) {
@@ -556,8 +575,9 @@ void readUsers(char* filename, UserHead* head, ProfessionHead* pHead) {
             trim(temp);
             splitArray = split(temp, slen, ';');
             if (splitArray != NULL) {
-                user = makeUserNode(pHead, head, splitArray);
+                user = makeUserNode();
                 if (user != NULL) {
+                    fillUserNode(pHead, head, user, splitArray);
                     pushBackUserNode(head, user);
                 }
             }
@@ -770,25 +790,25 @@ int compareUsers(User* a, User* b, int option) {
     int result;
 
     switch (option) {
-        case 1: 
+        case 1:
             result =  a->id - b->id;
             break;
-        case 2: 
+        case 2:
             result = strcmp(a->fullName, b->fullName);
             break;
-        case 3: 
+        case 3:
             result = a->age - b->age;
             break;
-        case 4: 
+        case 4:
             result = (a->friendsRating > b->friendsRating) ? 1 : (a->friendsRating < b->friendsRating) ? -1 : 0;
             break;
-        case 5: 
+        case 5:
             result = (a->publicRating > b->publicRating) ? 1 : (a->publicRating < b->publicRating) ? -1 : 0;
             break;
-        case 6: 
+        case 6:
             result = a->friendsCount - b->friendsCount;
             break;
-        default: 
+        default:
             result = 0;
             break;
     }
@@ -811,7 +831,7 @@ void writeUsersToFile(UserHead* head, const char* filename) {
                 professionName = current->profession->name;
             }
 
-            fprintf(file, "%s;%d;%s;%.1f;%.1f;%d", current->fullName, current->age, professionName, 
+            fprintf(file, "%s;%d;%s;%.1f;%.1f;%d", current->fullName, current->age, professionName,
                     current->friendsRating, current->publicRating, current->friendsCount);
 
             if (current->friendsCount > 0 && current->friendsId != NULL) {
@@ -913,99 +933,111 @@ void inputIntArray(UserHead* uHead, User* user, char *str, char sep, int isManua
     int actualIds[MAXLEN] = {0};
     int idList[MAXLEN] = {0};
 
-    for (i = 0; str[i] != '\0'; i++) {
-        if (str[i] == sep) sepCount++;
-    }
-    sepCount++;
+    if (strlen(str) != 0) {
+        for (i = 0; str[i] != '\0'; i++) {
+            if (str[i] == sep) sepCount++;
+        }
+        sepCount++;
 
-    if (sepCount > MAXLEN) {
-        printf("It seems that the number of entered IDs is too big -> updating friends count: %d\n", MAXLEN);
-        sepCount = MAXLEN - 1;
-    }
+        if (sepCount > MAXLEN) {
+            printf("It seems that the number of entered IDs is too big -> updating friends count: %d\n", MAXLEN);
+            sepCount = MAXLEN - 1;
+        }
 
-    if (user->friendsCount != sepCount) {
-        printf("It seems that the number of entered IDs does not correspond to the specified number of friends\n");
-        sepCount = user->friendsCount;
-    }
-
-    isInputValid = 1;
-    for (i = 0; str[i] != '\0' && isInputValid && enteredIdCount < sepCount; i++) {
-        if (str[i] == ',' || str[i + 1] == '\0') {
-            len = (str[i] == ',') ? (i - start) : (i - start + 1);
-            strncpy(tempStr, str + start, len);
-            tempStr[len] = '\0';
-
-            n = atoi(tempStr);
-            if (n != 0) {
-                enteredIds[enteredIdCount++] = n;
-                start = i + 1;
+        if (user->friendsCount != sepCount) {
+            printf("It seems that the number of entered IDs does not correspond to the specified number of friends\n");
+            if (sepCount < uHead->count) {
+                user->friendsCount = sepCount;
             } else {
-                printf("It seems that your input is not valid. Please check your input and try again\n");
-                isInputValid = 0;
+                user->friendsCount = uHead->count;
+            }
+            printf("updating friends count: %d\n", user->friendsCount);
+        }
+
+        isInputValid = 1;
+        for (i = 0; str[i] != '\0' && isInputValid && enteredIdCount < sepCount; i++) {
+            if (str[i] == ',' || str[i + 1] == '\0') {
+                len = (str[i] == ',') ? (i - start) : (i - start + 1);
+                strncpy(tempStr, str + start, len);
+                tempStr[len] = '\0';
+
+                n = atoi(tempStr);
+                if (n != 0) {
+                    enteredIds[enteredIdCount++] = n;
+                    start = i + 1;
+                } else {
+                    printf("It seems that your input is not valid. Please check your input and try again\n");
+                    isInputValid = 0;
+                }
             }
         }
-    }
 
-    if (!isManual) {
-        user->friendsId = malloc(sepCount * sizeof(int));
-        if (user->friendsId == NULL) {
-            perror("Memory allocation failed");
+        if (!isManual) {
+            user->friendsId = malloc(sepCount * sizeof(int));
+            if (user->friendsId == NULL) {
+                perror("Memory allocation failed");
+            } else {
+                for (i = 0; i < sepCount; i++) {
+                    user->friendsId[i] = enteredIds[i];
+                }
+            }
+        }
+
+        if (isInputValid && isManual) {
+            getUsersIdList(uHead, idList);
+            qsort(idList, uHead->count, sizeof(int), cmp);
+
+            qsort(enteredIds, enteredIdCount, sizeof(int), cmp);
+            unicIdCount = 1;
+            unicEnteredIds[0] = enteredIds[0];
+            for (i = 1; i < enteredIdCount; i++) {
+                if (enteredIds[i] != enteredIds[i - 1]) {
+                    unicEnteredIds[unicIdCount++] = enteredIds[i];
+                } else {
+                    printf("Duplicated ID: %d\n", enteredIds[i]);
+                }
+            }
+
+            if (unicIdCount != user->friendsCount) {
+                printf("It seems that some IDs are entered more than once -> updating friends count: %d\n", unicIdCount);
+                user->friendsCount = unicIdCount;
+            }
+
+            startIndex = 0;
+            actualIdCount = 0;
+            for (i = 0; i < unicIdCount; i++) {
+                foundIndex = binarySearch(idList, startIndex, uHead->count - 1, unicEnteredIds[i]);
+                if (foundIndex != -1) {
+                    startIndex = foundIndex;
+                    actualIds[actualIdCount++] = unicEnteredIds[i];
+                } else {
+                    printf("ID not found: %d\n", unicEnteredIds[i]);
+                }
+            }
+
+            if (actualIdCount != unicIdCount) {
+                printf("It seems that list of users does not contain some of entered IDs -> updating friends count: %d\n", actualIdCount);
+                user->friendsCount = actualIdCount;
+            }
+            if (user->friendsId != NULL) {
+                free(user->friendsId);
+            }
+            user->friendsId = malloc(actualIdCount * sizeof(int));
+            if (user->friendsId == NULL) {
+                perror("Memory allocation failed");
+                makeLog("ERROR", "inpuIntArray", "Memory allocation failed (user->friendsId)");
+            } else {
+                for (i = 0; i < actualIdCount; i++) {
+                    user->friendsId[i] = actualIds[i];
+                }
+                printf("Success: friends ids specified\n\n");
+            }
         } else {
-            for (i = 0; i < sepCount; i++) {
-                user->friendsId[i] = enteredIds[i];
-            }
+            user->friendsCount = 0;
         }
-    }
-
-    if (isInputValid && isManual) {
-        getUsersIdList(uHead, idList);
-        qsort(idList, uHead->count, sizeof(int), cmp);
-
-        qsort(enteredIds, enteredIdCount, sizeof(int), cmp);
-        unicIdCount = 1;
-        unicEnteredIds[0] = enteredIds[0];
-        for (i = 1; i < enteredIdCount; i++) {
-            if (enteredIds[i] != enteredIds[i - 1]) {
-                unicEnteredIds[unicIdCount++] = enteredIds[i];
-            } else {
-                printf("Duplicated ID: %d\n", enteredIds[i]);
-            }
-        }
-
-        if (unicIdCount != user->friendsCount) {
-            printf("It seems that some IDs are entered more than once -> updating friends count: %d\n", unicIdCount);
-            user->friendsCount = unicIdCount;
-        }
-
-        startIndex = 0;
-        actualIdCount = 0;
-        for (i = 0; i < unicIdCount; i++) {
-            foundIndex = binarySearch(idList, startIndex, uHead->count - 1, unicEnteredIds[i]);
-            if (foundIndex != -1) {
-                startIndex = foundIndex;
-                actualIds[actualIdCount++] = unicEnteredIds[i];
-            } else {
-                printf("ID not found: %d\n", unicEnteredIds[i]);
-            }
-        }
-
-        if (actualIdCount != unicIdCount) {
-            printf("It seems that list of users does not contain some of entered IDs -> updating friends count: %d\n", actualIdCount);
-            user->friendsCount = actualIdCount;
-        }
-        if (user->friendsId != NULL) {
-            free(user->friendsId);
-        }
-        user->friendsId = malloc(actualIdCount * sizeof(int));
-        if (user->friendsId == NULL) {
-            perror("Memory allocation failed");
-            makeLog("ERROR", "inpuIntArray", "Memory allocation failed (user->friendsId)");
-        } else {
-            for (i = 0; i < actualIdCount; i++) {
-                user->friendsId[i] = actualIds[i];
-            }
-            printf("Success: friends ids specified\n\n");
-        }
+    } else {
+        user->friendsCount = 0;
+        printf("Seems that your user does not have any friends\n");
     }
 }
 
@@ -1024,12 +1056,12 @@ int cmp(const void *a, const void *b) {
 }
 
 int binarySearch(const int arr[], int start, int end, int target) {
-    int result, isFound;
+    int result, isFound, mid;
 
     result = -1;
     isFound = 0;
     while (start <= end && !isFound) {
-        int mid = start + (end - start) / 2;
+        mid = start + (end - start) / 2;
         if (arr[mid] == target) {
             isFound = 1;
             result = mid;
@@ -1039,7 +1071,7 @@ int binarySearch(const int arr[], int start, int end, int target) {
             end = mid - 1;
         }
     }
-    return result; 
+    return result;
 }
 
 int startsWithIgnoreCase(const char *str, const char *prefix) {
@@ -1065,7 +1097,7 @@ void clearStdin() {
 }
 
 void makeLog(const char* title, const char* funcName, const char* log) {
-    FILE* file = fopen("program.log", "a"); 
+    FILE* file = fopen("program.log", "a");
     struct tm* timeinfo;
     char timeStr[80];
     time_t rawtime;
@@ -1080,7 +1112,7 @@ void makeLog(const char* title, const char* funcName, const char* log) {
 
         fprintf(file, "%-19s | FROM %-30s: %-15s %s\n", timeStr, funcName, title, log);
 
-        fclose(file); 
+        fclose(file);
     }
 }
 
@@ -1210,17 +1242,7 @@ void deleteProfessionGUI(ProfessionHead* pHead, UserHead* uHead) {
 void addUserGUI(ProfessionHead* pHead, UserHead* uHead) {
     User* user = NULL;
 
-    user = (User*)malloc(sizeof(User));
-    user->age = 0;
-    user->friendsCount = 0;
-    user->publicRating = 0;
-    user->friendsRating = 0;
-    user->id = 0;
-    user->fullName = NULL;
-    user->profession = NULL;
-    user->friendsId = NULL;
-    user->next = NULL;
-    user->prev = NULL;
+    user = makeUserNode();
     if (user != NULL) {
         printf("Enter information for new user:\n");
 
@@ -1230,7 +1252,7 @@ void addUserGUI(ProfessionHead* pHead, UserHead* uHead) {
         specifyUserPublicRatingGUI(user);
         specifyUserFriendsGUI(uHead, user);
         specifyUserProfessionGUI(pHead, user);
-        
+
         pushBackUserNode(uHead, user);
         printf("\nSuccess: user has been added!\n");
         printUserHeader();
@@ -1413,7 +1435,7 @@ void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead) {
     }
 }
 
-void specifyUserNameGUI(User* user) { 
+void specifyUserNameGUI(User* user) {
     char temp[MAXLEN];
 
     printf("Enter user name: ");
@@ -1486,7 +1508,7 @@ void specifyUserFriendsGUI(UserHead* uHead, User* user) {
     int friendsCount;
     int success;
     char temp[MAXLEN];
-    
+
     printf("Enter user friends count (less than %d): ", uHead->count);
     success = scanf("%d", &friendsCount);
     clearStdin();
@@ -1520,7 +1542,7 @@ void specifyUserProfessionGUI(ProfessionHead* pHead, User* user) {
     Profession* profession;
     int success;
     int professionId;
-    
+
     if (pHead->first == NULL) {
         printf("The list of professions is empty\n");
         printf("You can add new profession in menu with option 4\n");

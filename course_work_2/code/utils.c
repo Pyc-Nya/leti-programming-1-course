@@ -90,99 +90,111 @@ void inputIntArray(UserHead* uHead, User* user, char *str, char sep, int isManua
     int actualIds[MAXLEN] = {0};
     int idList[MAXLEN] = {0};
 
-    for (i = 0; str[i] != '\0'; i++) {
-        if (str[i] == sep) sepCount++;
-    }
-    sepCount++;
+    if (strlen(str) != 0) {
+        for (i = 0; str[i] != '\0'; i++) {
+            if (str[i] == sep) sepCount++;
+        }
+        sepCount++;
 
-    if (sepCount > MAXLEN) {
-        printf("It seems that the number of entered IDs is too big -> updating friends count: %d\n", MAXLEN);
-        sepCount = MAXLEN - 1;
-    }
+        if (sepCount > MAXLEN) {
+            printf("It seems that the number of entered IDs is too big -> updating friends count: %d\n", MAXLEN);
+            sepCount = MAXLEN - 1;
+        }
 
-    if (user->friendsCount != sepCount) {
-        printf("It seems that the number of entered IDs does not correspond to the specified number of friends\n");
-        sepCount = user->friendsCount;
-    }
-
-    isInputValid = 1;
-    for (i = 0; str[i] != '\0' && isInputValid && enteredIdCount < sepCount; i++) {
-        if (str[i] == ',' || str[i + 1] == '\0') {
-            len = (str[i] == ',') ? (i - start) : (i - start + 1);
-            strncpy(tempStr, str + start, len);
-            tempStr[len] = '\0';
-
-            n = atoi(tempStr);
-            if (n != 0) {
-                enteredIds[enteredIdCount++] = n;
-                start = i + 1;
+        if (user->friendsCount != sepCount) {
+            printf("It seems that the number of entered IDs does not correspond to the specified number of friends\n");
+            if (sepCount < uHead->count) {
+                user->friendsCount = sepCount;
             } else {
-                printf("It seems that your input is not valid. Please check your input and try again\n");
-                isInputValid = 0;
+                user->friendsCount = uHead->count;
+            }
+            printf("updating friends count: %d\n", user->friendsCount);
+        }
+
+        isInputValid = 1;
+        for (i = 0; str[i] != '\0' && isInputValid; i++) {
+            if (str[i] == ',' || str[i + 1] == '\0') {
+                len = (str[i] == ',') ? (i - start) : (i - start + 1);
+                strncpy(tempStr, str + start, len);
+                tempStr[len] = '\0';
+
+                n = atoi(tempStr);
+                if (n != 0) {
+                    enteredIds[enteredIdCount++] = n;
+                    start = i + 1;
+                } else {
+                    printf("It seems that your input is not valid. Please check your input and try again\n");
+                    isInputValid = 0;
+                }
             }
         }
-    }
 
-    if (!isManual) {
-        user->friendsId = malloc(sepCount * sizeof(int));
-        if (user->friendsId == NULL) {
-            perror("Memory allocation failed");
+        if (!isManual) {
+            user->friendsId = malloc(sepCount * sizeof(int));
+            if (user->friendsId == NULL) {
+                perror("Memory allocation failed");
+            } else {
+                for (i = 0; i < sepCount; i++) {
+                    user->friendsId[i] = enteredIds[i];
+                }
+            }
+        }
+
+        if (isInputValid && isManual) {
+            getUsersIdList(uHead, idList);
+            qsort(idList, uHead->count, sizeof(int), cmp);
+            qsort(enteredIds, enteredIdCount, sizeof(int), cmp);
+            
+            unicIdCount = 1;
+            unicEnteredIds[0] = enteredIds[0];
+            for (i = 1; i < enteredIdCount; i++) {
+                if (enteredIds[i] != enteredIds[i - 1]) {
+                    unicEnteredIds[unicIdCount++] = enteredIds[i];
+                } else {
+                    printf("Duplicated ID: %d\n", enteredIds[i]);
+                }
+            }
+
+            if (unicIdCount != user->friendsCount) {
+                printf("It seems that some IDs are entered more than once -> updating friends count: %d\n", unicIdCount);
+                user->friendsCount = unicIdCount;
+            }
+
+            startIndex = 0;
+            actualIdCount = 0;
+            for (i = 0; i < unicIdCount; i++) {
+                foundIndex = binarySearch(idList, startIndex, uHead->count - 1, unicEnteredIds[i]);
+                if (foundIndex != -1) {
+                    startIndex = foundIndex;
+                    actualIds[actualIdCount++] = unicEnteredIds[i];
+                } else {
+                    printf("ID not found: %d\n", unicEnteredIds[i]);
+                }
+            }
+
+            if (actualIdCount != unicIdCount) {
+                printf("It seems that list of users does not contain some of entered IDs -> updating friends count: %d\n", actualIdCount);
+                user->friendsCount = actualIdCount;
+            }
+            if (user->friendsId != NULL) {
+                free(user->friendsId);
+            }
+            user->friendsId = malloc(actualIdCount * sizeof(int));
+            if (user->friendsId == NULL) {
+                perror("Memory allocation failed");
+                makeLog("ERROR", "inpuIntArray", "Memory allocation failed (user->friendsId)");
+            } else {
+                for (i = 0; i < actualIdCount; i++) {
+                    user->friendsId[i] = actualIds[i];
+                }
+                printf("Success: friends ids specified\n\n");
+            }
         } else {
-            for (i = 0; i < sepCount; i++) {
-                user->friendsId[i] = enteredIds[i];
-            }
+            user->friendsCount = 0;
         }
-    }
-
-    if (isInputValid && isManual) {
-        getUsersIdList(uHead, idList);
-        qsort(idList, uHead->count, sizeof(int), cmp);
-
-        qsort(enteredIds, enteredIdCount, sizeof(int), cmp);
-        unicIdCount = 1;
-        unicEnteredIds[0] = enteredIds[0];
-        for (i = 1; i < enteredIdCount; i++) {
-            if (enteredIds[i] != enteredIds[i - 1]) {
-                unicEnteredIds[unicIdCount++] = enteredIds[i];
-            } else {
-                printf("Duplicated ID: %d\n", enteredIds[i]);
-            }
-        }
-
-        if (unicIdCount != user->friendsCount) {
-            printf("It seems that some IDs are entered more than once -> updating friends count: %d\n", unicIdCount);
-            user->friendsCount = unicIdCount;
-        }
-
-        startIndex = 0;
-        actualIdCount = 0;
-        for (i = 0; i < unicIdCount; i++) {
-            foundIndex = binarySearch(idList, startIndex, uHead->count - 1, unicEnteredIds[i]);
-            if (foundIndex != -1) {
-                startIndex = foundIndex;
-                actualIds[actualIdCount++] = unicEnteredIds[i];
-            } else {
-                printf("ID not found: %d\n", unicEnteredIds[i]);
-            }
-        }
-
-        if (actualIdCount != unicIdCount) {
-            printf("It seems that list of users does not contain some of entered IDs -> updating friends count: %d\n", actualIdCount);
-            user->friendsCount = actualIdCount;
-        }
-        if (user->friendsId != NULL) {
-            free(user->friendsId);
-        }
-        user->friendsId = malloc(actualIdCount * sizeof(int));
-        if (user->friendsId == NULL) {
-            perror("Memory allocation failed");
-            makeLog("ERROR", "inpuIntArray", "Memory allocation failed (user->friendsId)");
-        } else {
-            for (i = 0; i < actualIdCount; i++) {
-                user->friendsId[i] = actualIds[i];
-            }
-            printf("Success: friends ids specified\n\n");
-        }
+    } else {
+        user->friendsCount = 0;
+        printf("Seems that your user does not have any friends\n");
     }
 }
 
@@ -201,12 +213,12 @@ int cmp(const void *a, const void *b) {
 }
 
 int binarySearch(const int arr[], int start, int end, int target) {
-    int result, isFound;
+    int result, isFound, mid;
 
     result = -1;
     isFound = 0;
     while (start <= end && !isFound) {
-        int mid = start + (end - start) / 2;
+        mid = start + (end - start) / 2;
         if (arr[mid] == target) {
             isFound = 1;
             result = mid;

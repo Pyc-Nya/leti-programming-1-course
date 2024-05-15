@@ -27,7 +27,7 @@ typedef struct userHeadStruct {
 } UserHead;
 
 UserHead* makeUserHead();
-User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str);
+User* makeUserNode();
 void pushBackUserNode(UserHead* head, User* user);
 void freeUserStruct(User* user);
 void freeUserList(UserHead* head);
@@ -43,6 +43,7 @@ void filterUsersByName(UserHead* uHead, char* name);
 void deleteUserNode(UserHead* head, User* user);
 int compareUsers(User* a, User* b, int option);
 void sortUsersByField(UserHead* uHead, int option);
+void fillUserNode(ProfessionHead* pHead, UserHead* uHead, User* user, char** str);
 void writeUsersToFile(UserHead* head, const char* filename);
 
 #endif

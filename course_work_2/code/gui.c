@@ -137,17 +137,7 @@ void deleteProfessionGUI(ProfessionHead* pHead, UserHead* uHead) {
 void addUserGUI(ProfessionHead* pHead, UserHead* uHead) {
     User* user = NULL;
 
-    user = (User*)malloc(sizeof(User));
-    user->age = 0;
-    user->friendsCount = 0;
-    user->publicRating = 0;
-    user->friendsRating = 0;
-    user->id = 0;
-    user->fullName = NULL;
-    user->profession = NULL;
-    user->friendsId = NULL;
-    user->next = NULL;
-    user->prev = NULL;
+    user = makeUserNode();
     if (user != NULL) {
         printf("Enter information for new user:\n");
 

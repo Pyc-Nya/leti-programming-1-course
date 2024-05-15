@@ -27,10 +27,28 @@ UserHead* makeUserHead() {
     return head;
 }
 
-User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
+User* makeUserNode() {
     User* user = NULL;
 
     user = (User*)malloc(sizeof(User));
+    if (user != NULL) {
+        user->age = 0;
+        user->friendsCount = 0;
+        user->publicRating = 0;
+        user->friendsRating = 0;
+        user->id = 0;
+        user->fullName = NULL;
+        user->profession = NULL;
+        user->friendsId = NULL;
+        user->next = NULL;
+        user->prev = NULL;
+        user->id = 0;
+    }
+
+    return user;
+}
+
+void fillUserNode(ProfessionHead* pHead, UserHead* uHead, User* user, char** str) {
 
     if (user != NULL) {
         user->fullName = str[0];
@@ -61,8 +79,6 @@ User* makeUserNode(ProfessionHead* pHead, UserHead* uHead, char** str) {
         perror("Memory allocation failed");
         makeLog("ERROR", "makeUserNode", "Memory allocation failed (user)");
     }
-
-    return user;
 }
 
 void pushBackUserNode(UserHead* head, User* user) {
@@ -152,8 +168,9 @@ void readUsers(char* filename, UserHead* head, ProfessionHead* pHead) {
             trim(temp);
             splitArray = split(temp, slen, ';');
             if (splitArray != NULL) {
-                user = makeUserNode(pHead, head, splitArray);
+                user = makeUserNode();
                 if (user != NULL) {
+                    fillUserNode(pHead, head, user, splitArray);
                     pushBackUserNode(head, user);
                 }
             }
