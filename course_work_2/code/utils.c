@@ -112,7 +112,7 @@ void inputIntArray(UserHead* uHead, User* user, char *str, char sep, int isManua
         }
 
         isInputValid = 1;
-        for (i = 0; str[i] != '\0' && isInputValid; i++) {
+        for (i = 0; str[i] != '\0' && isInputValid && enteredIdCount < sepCount; i++) {
             if (str[i] == ',' || str[i + 1] == '\0') {
                 len = (str[i] == ',') ? (i - start) : (i - start + 1);
                 strncpy(tempStr, str + start, len);
