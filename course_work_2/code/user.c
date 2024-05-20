@@ -211,13 +211,13 @@ void filterUsersByName(UserHead* uHead, char* name) {
     printLongLine();
 }
 
-void filterUsersByProfessionName(UserHead* uHead, char* professionName) {
+void filterUsersByProfessionId(UserHead* uHead, int id) {
     User *q;
 
     printUserHeader();
     q = uHead->first;
     while (q != NULL) {
-        if ((q->profession != NULL && startsWithIgnoreCase(q->profession->name, professionName) == 1) || (q->profession == NULL && startsWithIgnoreCase("undefined", professionName) == 1)) {
+        if ((q->profession != NULL && q->profession->id == id) || (q->profession == NULL && id == 0)) {
             printUser(q);
         }
         q = q->next;

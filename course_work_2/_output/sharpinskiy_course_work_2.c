@@ -75,7 +75,7 @@ void filterUsersByPublicRating(UserHead* uHead, float minRating, float maxRating
 void filterUsersByFriendsRating(UserHead* uHead, float minRating, float maxRating);
 void filterUsersByAge(UserHead* uHead, int minAge, int maxAge);
 void filterUsersByFriendsCount(UserHead* uHead, int minCount, int maxCount);
-void filterUsersByProfessionName(UserHead* uHead, char* professionName);
+void filterUsersByProfessionId(UserHead* uHead, int id);
 void filterUsersByName(UserHead* uHead, char* name);
 void deleteUserNode(UserHead* head, User* user);
 int compareUsers(User* a, User* b, int option);
@@ -105,7 +105,7 @@ void specifyUserProfessionGUI(ProfessionHead* pHead, User* user);
 void specifyUserFriendsGUI(UserHead* uHead, User* user);
 void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead);
 void addUserGUI(ProfessionHead* pHead, UserHead* uHead);
-void filterUsersByFieldGUI(UserHead* uHead);
+void filterUsersByFieldGUI(ProfessionHead* pHead, UserHead* uHead);
 void deleteUserGUI(UserHead* head);
 void clearProfessionListGUI(ProfessionHead* pHead, UserHead* uHead);
 void sortUsersByFieldGUI(UserHead* uHead);
@@ -244,7 +244,7 @@ void printUser(User *user) {
                 strcat(friendsIds, ", ");
             }
         }
-    } 
+    }
 
     trimForDisplay(trimmedFullName, user->fullName, 22);
     trimForDisplay(trimmedProfession, profession, 16);
@@ -618,13 +618,13 @@ void filterUsersByName(UserHead* uHead, char* name) {
     printLongLine();
 }
 
-void filterUsersByProfessionName(UserHead* uHead, char* professionName) {
+void filterUsersByProfessionId(UserHead* uHead, int id) {
     User *q;
 
     printUserHeader();
     q = uHead->first;
     while (q != NULL) {
-        if ((q->profession != NULL && startsWithIgnoreCase(q->profession->name, professionName) == 1) || (q->profession == NULL && startsWithIgnoreCase("undefined", professionName) == 1)) {
+        if ((q->profession != NULL && q->profession->id == id) || (q->profession == NULL && id == 0)) {
             printUser(q);
         }
         q = q->next;
@@ -1182,7 +1182,7 @@ void appOption(ProfessionHead* professionHead, UserHead* userHead, int option) {
             break;
         case 6:
             printOptionHeader("Filter users");
-            filterUsersByFieldGUI(userHead);
+            filterUsersByFieldGUI(professionHead, userHead);
             break;
         case 7:
             printOptionHeader("Sort users");
@@ -1292,7 +1292,6 @@ void deleteUserGUI(UserHead* head) {
         }
     } else {
         printf("The list of users is empty\n");
-        printf("You can add new user in menu with option 0\n");
     }
 }
 
@@ -1567,7 +1566,7 @@ void specifyUserProfessionGUI(ProfessionHead* pHead, User* user) {
     }
 }
 
-void filterUsersByFieldGUI(UserHead* uHead) {
+void filterUsersByFieldGUI(ProfessionHead* pHead, UserHead* uHead) {
     int option;
     char temp[MAXLEN];
     int tempInt;
@@ -1591,11 +1590,11 @@ void filterUsersByFieldGUI(UserHead* uHead) {
             }
             break;
         case 2:
-            printf("Enter profession name: ");
-            if (fgets(temp, MAXLEN, stdin) != NULL) {
-                trim(temp);
-                filterUsersByProfessionName(uHead, temp);
-            }
+            printAllProfessions(pHead);
+            printf("Enter profession id (0 to show users with undefined profession): ");
+            scanf("%d", &tempInt);
+            clearStdin();
+            filterUsersByProfessionId(uHead, tempInt);
             break;
         case 3:
             printf("Enter age: ");

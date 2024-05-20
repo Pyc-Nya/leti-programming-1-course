@@ -38,7 +38,7 @@ void filterUsersByPublicRating(UserHead* uHead, float minRating, float maxRating
 void filterUsersByFriendsRating(UserHead* uHead, float minRating, float maxRating);
 void filterUsersByAge(UserHead* uHead, int minAge, int maxAge);
 void filterUsersByFriendsCount(UserHead* uHead, int minCount, int maxCount);
-void filterUsersByProfessionName(UserHead* uHead, char* professionName);
+void filterUsersByProfessionId(UserHead* uHead, char* professionName);
 void filterUsersByName(UserHead* uHead, char* name);
 void deleteUserNode(UserHead* head, User* user);
 int compareUsers(User* a, User* b, int option);

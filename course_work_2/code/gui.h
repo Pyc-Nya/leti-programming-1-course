@@ -20,7 +20,7 @@ void specifyUserProfessionGUI(ProfessionHead* pHead, User* user);
 void specifyUserFriendsGUI(UserHead* uHead, User* user);
 void updateUserDataGUI(ProfessionHead* pHead, UserHead* uHead);
 void addUserGUI(ProfessionHead* pHead, UserHead* uHead);
-void filterUsersByFieldGUI(UserHead* uHead);
+void filterUsersByFieldGUI(ProfessionHead* pHead, UserHead* uHead);
 void deleteUserGUI(UserHead* head);
 void clearProfessionListGUI(ProfessionHead* pHead, UserHead* uHead);
 void sortUsersByFieldGUI(UserHead* uHead);

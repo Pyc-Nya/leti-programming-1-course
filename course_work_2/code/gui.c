@@ -74,7 +74,7 @@ void appOption(ProfessionHead* professionHead, UserHead* userHead, int option) {
             break;
         case 6:
             printOptionHeader("Filter users");
-            filterUsersByFieldGUI(userHead);
+            filterUsersByFieldGUI(professionHead, userHead);
             break;
         case 7:
             printOptionHeader("Sort users");
@@ -459,7 +459,7 @@ void specifyUserProfessionGUI(ProfessionHead* pHead, User* user) {
     }
 }
 
-void filterUsersByFieldGUI(UserHead* uHead) {
+void filterUsersByFieldGUI(ProfessionHead* pHead, UserHead* uHead) {
     int option;
     char temp[MAXLEN];
     int tempInt;
@@ -483,11 +483,11 @@ void filterUsersByFieldGUI(UserHead* uHead) {
             }
             break;
         case 2:
-            printf("Enter profession name: ");
-            if (fgets(temp, MAXLEN, stdin) != NULL) {
-                trim(temp);
-                filterUsersByProfessionName(uHead, temp);
-            }
+            printAllProfessions(pHead);
+            printf("Enter profession id: ");
+            scanf("%d", &tempInt);
+            clearStdin();
+            filterUsersByProfession(uHead, tempInt);
             break;
         case 3:
             printf("Enter age: ");
